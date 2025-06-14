@@ -25,6 +25,7 @@ import { EventsScreen } from './src/screens/EventsScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { BatchSelectionScreen } from './src/screens/BatchSelectionScreen';
+import { NotificationsScreen } from './src/screens/NotificationsScreen';
 
 type Screen =
   | 'onboarding'
@@ -267,8 +268,12 @@ export default function App() {
         );
 
       case 'notifications':
-        // Placeholder screen - redirect to home for now
-        return <HomeScreen onNavigate={handleNavigation} />;
+        return (
+          <NotificationsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('home')}
+          />
+        );
 
       default:
         return <OnboardingScreen onNext={() => navigateToScreen('enterCode')} onLogin={() => navigateToScreen('login')} />;

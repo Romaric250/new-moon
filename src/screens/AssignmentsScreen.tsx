@@ -133,31 +133,33 @@ export const AssignmentsScreen: React.FC<AssignmentsScreenProps> = ({
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {bottomTabs.map((tab) => {
-          const IconComponent = tab.icon;
-          return (
-            <TouchableOpacity
-              key={tab.id}
-              style={styles.bottomNavItem}
-              onPress={() => onNavigate(tab.id)}
-              activeOpacity={0.7}
-            >
-              <IconComponent
-                size={24}
-                color={tab.active ? Colors.primary : '#6B7280'}
-              />
-              <Text
-                style={[
-                  styles.bottomNavText,
-                  { color: tab.active ? Colors.primary : '#6B7280' },
-                ]}
+      <View style={styles.bottomNavContainer}>
+        <View style={styles.bottomNav}>
+          {bottomTabs.map((tab) => {
+            const IconComponent = tab.icon;
+            return (
+              <TouchableOpacity
+                key={tab.id}
+                style={styles.bottomNavItem}
+                onPress={() => onNavigate(tab.id)}
+                activeOpacity={0.7}
               >
-                {tab.title}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <IconComponent
+                  size={24}
+                  color={tab.active ? Colors.primary : '#6B7280'}
+                />
+                <Text
+                  style={[
+                    styles.bottomNavText,
+                    { color: tab.active ? Colors.primary : '#6B7280' },
+                  ]}
+                >
+                  {tab.title}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -239,18 +241,24 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
   },
-  bottomNav: {
-    flexDirection: 'row',
+  bottomNavContainer: {
     backgroundColor: Colors.white,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
+    paddingBottom: 34, // Extra padding for safe area
+  },
+  bottomNav: {
+    flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 16,
+    paddingTop: 16,
   },
   bottomNavItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    minHeight: 60, // Ensure minimum touch target
   },
   bottomNavText: {
     fontSize: 12,

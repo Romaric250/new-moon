@@ -21,6 +21,8 @@ import { SubmitAssignmentScreen } from './src/screens/SubmitAssignmentScreen';
 import { StepDetailsScreen } from './src/screens/StepDetailsScreen';
 import { SubmittedAssignmentsScreen } from './src/screens/SubmittedAssignmentsScreen';
 import { EventDetailsScreen } from './src/screens/EventDetailsScreen';
+import { EventsScreen } from './src/screens/EventsScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
 
 type Screen =
   | 'onboarding'
@@ -228,10 +230,24 @@ export default function App() {
           />
         );
 
-      case 'notifications':
       case 'events':
+        return (
+          <EventsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('home')}
+          />
+        );
+
       case 'profile':
-        // Placeholder screens - redirect to home for now
+        return (
+          <ProfileScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('home')}
+          />
+        );
+
+      case 'notifications':
+        // Placeholder screen - redirect to home for now
         return <HomeScreen onNavigate={handleNavigation} />;
 
       default:

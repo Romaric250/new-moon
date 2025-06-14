@@ -63,38 +63,6 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
       icon: Shield,
       available: true,
     },
-    {
-      id: 'excellence',
-      name: 'Excellence',
-      title: 'Batch of Excellence',
-      description: 'Coming soon for students who strive for perfection in every academic endeavor.',
-      features: [
-        'Premium Content Access',
-        'One-on-One Tutoring',
-        'Research Opportunities',
-        'International Partnerships',
-      ],
-      color: '#8B5CF6',
-      gradient: ['#EDE9FE', '#C4B5FD'],
-      icon: Star,
-      available: false,
-    },
-    {
-      id: 'innovation',
-      name: 'Innovation',
-      title: 'Batch of Innovation',
-      description: 'For creative minds ready to shape the future through technology and innovation.',
-      features: [
-        'Tech Workshops',
-        'Innovation Labs',
-        'Startup Incubation',
-        'Industry Connections',
-      ],
-      color: '#10B981',
-      gradient: ['#D1FAE5', '#6EE7B7'],
-      icon: Trophy,
-      available: false,
-    },
   ];
 
   const handleBatchSelect = (batch: Batch) => {
@@ -234,9 +202,9 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
 
         {/* Footer Note */}
         <View style={styles.footerNote}>
-          <Users size={20} color="#6B7280" />
+          <Shield size={20} color="#F59E0B" />
           <Text style={styles.footerText}>
-            More batches will be available soon. Start with Fortitude and unlock your potential!
+            Join the Batch of Fortitude and unlock your potential for academic excellence!
           </Text>
         </View>
       </ScrollView>

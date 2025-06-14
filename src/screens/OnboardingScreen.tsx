@@ -98,22 +98,24 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: wp(6.4), // 24px on 375px screen
-    paddingVertical: hp(4), // 32px on 800px screen
+    paddingTop: hp(2), // Reduced top padding
+    paddingBottom: hp(2), // Reduced bottom padding
   },
   illustrationContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: hp(45), // Minimum 45% of screen height
+    paddingVertical: hp(3), // Fixed padding instead of flex
+    minHeight: hp(35), // Reduced minimum height
+    maxHeight: hp(45), // Maximum height to prevent overflow
   },
   illustrationFrame: {
-    width: wp(85.3), // 320px on 375px screen, scales responsively
-    height: wp(85.3), // Keep it square
-    maxWidth: 350, // Maximum size for larger screens
-    maxHeight: 350,
+    width: wp(70), // Reduced from 85.3% to 70%
+    height: wp(70), // Keep it square
+    maxWidth: 280, // Reduced maximum size
+    maxHeight: 280,
     backgroundColor: Colors.white,
-    borderRadius: normalize(24),
-    marginBottom: hp(4), // 32px on 800px screen
+    borderRadius: normalize(20), // Slightly smaller border radius
+    marginBottom: hp(2), // Reduced margin
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -123,43 +125,43 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   illustration: {
-    width: wp(68.3), // 256px on 375px screen
-    height: wp(68.3), // Keep it square
-    maxWidth: 280,
-    maxHeight: 280,
+    width: wp(55), // Reduced from 68.3% to 55%
+    height: wp(55), // Keep it square
+    maxWidth: 220, // Reduced maximum size
+    maxHeight: 220,
     backgroundColor: Colors.primary,
-    borderRadius: normalize(16),
+    borderRadius: normalize(14), // Slightly smaller
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   illustrationInner: {
-    width: wp(34.1), // 128px on 375px screen
-    height: wp(34.1), // Keep it square
-    maxWidth: 140,
-    maxHeight: 140,
+    width: wp(27), // Reduced from 34.1% to 27%
+    height: wp(27), // Keep it square
+    maxWidth: 110, // Reduced maximum size
+    maxHeight: 110,
     backgroundColor: Colors.white,
-    borderRadius: normalize(12),
+    borderRadius: normalize(10), // Slightly smaller
     opacity: 0.9,
   },
   dot: {
-    width: normalize(24),
-    height: normalize(24),
+    width: normalize(20), // Slightly smaller
+    height: normalize(20),
     backgroundColor: Colors.white,
-    borderRadius: normalize(12),
+    borderRadius: normalize(10),
     position: 'absolute',
   },
   dotTopLeft: {
-    top: normalize(32),
-    left: normalize(32),
+    top: normalize(24), // Adjusted position
+    left: normalize(24),
   },
   dotBottomRight: {
-    bottom: normalize(32),
-    right: normalize(32),
+    bottom: normalize(24), // Adjusted position
+    right: normalize(24),
   },
   pagination: {
     flexDirection: 'row',
-    marginBottom: hp(6), // 48px on 800px screen
+    marginBottom: hp(3), // Reduced from 6% to 3%
   },
   paginationDot: {
     width: normalize(8),
@@ -172,36 +174,37 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   textContainer: {
-    marginBottom: hp(4), // 32px on 800px screen
-    paddingHorizontal: wp(2.7), // 10px on 375px screen
+    marginBottom: hp(3), // Reduced from 4% to 3%
+    paddingHorizontal: wp(2), // Reduced padding
   },
   title: {
-    fontSize: normalize(30),
+    fontSize: normalize(26), // Reduced from 30 to 26
     fontWeight: 'bold',
     color: '#111827',
     textAlign: 'center',
-    marginBottom: hp(3), // 24px on 800px screen
-    lineHeight: normalize(36),
+    marginBottom: hp(2), // Reduced from 3% to 2%
+    lineHeight: normalize(32), // Adjusted line height
   },
   description: {
-    fontSize: normalize(16),
+    fontSize: normalize(15), // Slightly reduced from 16 to 15
     color: '#6B7280',
     textAlign: 'center',
-    lineHeight: normalize(24),
-    paddingHorizontal: wp(4.3), // 16px on 375px screen
+    lineHeight: normalize(22), // Adjusted line height
+    paddingHorizontal: wp(3), // Reduced from 4.3% to 3%
   },
   buttonContainer: {
-    paddingBottom: hp(4), // 32px on 800px screen
-    paddingHorizontal: wp(2.7), // 10px on 375px screen for better button spacing
+    paddingBottom: hp(3), // Reduced from 4% to 3%
+    paddingHorizontal: wp(2), // Reduced padding
+    marginTop: 'auto', // Push to bottom
   },
   loginButtonContainer: {
-    marginTop: hp(2), // 16px on 800px screen
+    marginTop: hp(1.5), // Reduced from 2% to 1.5%
     alignItems: 'center',
   },
   loginPrompt: {
-    fontSize: normalize(14),
+    fontSize: normalize(13), // Slightly reduced
     color: '#6B7280',
-    marginBottom: hp(1.5), // 12px on 800px screen
+    marginBottom: hp(1), // Reduced from 1.5% to 1%
     textAlign: 'center',
   },
 });

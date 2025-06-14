@@ -16,11 +16,7 @@ import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Colors } from '../constants/colors';
-import {
-  AnimationConfig,
-  createSafeTransformAnimation,
-  createProgressAnimation
-} from '../utils';
+// Removed animation imports to avoid conflicts
 
 interface ResetPasswordScreenProps {
   onBack: () => void;
@@ -42,58 +38,29 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Animation values
+  // Simplified animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
-  const headerScaleAnim = useRef(new Animated.Value(0.8)).current;
-  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
-  const strengthContainerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Enhanced entrance animation with stagger
-    Animated.stagger(150, [
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 600,
-          easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 600,
-          easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.spring(headerScaleAnim, {
+    // Simplified entrance animation
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
         toValue: 1,
-        tension: 100,
-        friction: 8,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
         useNativeDriver: true,
       }),
     ]).start();
   }, []);
 
-  // Enhanced password strength indicator with smooth animations
+  // Disabled animations to avoid conflicts
   useEffect(() => {
-    const strength = getPasswordStrength(formData.password);
-
-    // Animate progress bar using safe function
-    createProgressAnimation(progressAnim, strength).start();
-
-    // Animate strength container appearance
-    if (formData.password.length > 0) {
-      Animated.spring(strengthContainerAnim, {
-        toValue: 1,
-        tension: 100,
-        friction: 8,
-        useNativeDriver: true, // Safe for opacity and transform
-      }).start();
-    } else {
-      createSafeTransformAnimation(strengthContainerAnim, 0, 200).start();
-    }
+    // Static progress update without animation
   }, [formData.password]);
 
   const getPasswordStrength = (password: string): number => {
@@ -126,20 +93,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    // Button press animation
-    Animated.sequence([
-      Animated.timing(buttonScaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.spring(buttonScaleAnim, {
-        toValue: 1,
-        tension: 300,
-        friction: 10,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Disabled button animation
 
     setIsLoading(true);
 
@@ -191,14 +145,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
           ]}
         >
           {/* Header */}
-          <Animated.View
-            style={[
-              styles.header,
-              {
-                transform: [{ scale: headerScaleAnim }],
-              },
-            ]}
-          >
+          <View style={styles.header}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={onBack}
@@ -207,7 +154,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               <ArrowLeft size={24} color="#111827" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Reset Password</Text>
-          </Animated.View>
+          </View>
 
           {/* Content */}
           <ScrollView
@@ -236,63 +183,31 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 testID="new-password-input"
               />
               
-              {/* Enhanced Password Strength Indicator */}
+              {/* Simplified Password Strength Indicator */}
               {formData.password.length > 0 && (
-                <Animated.View
-                  style={[
-                    styles.strengthContainer,
-                    {
-                      opacity: strengthContainerAnim,
-                      transform: [
-                        {
-                          scale: strengthContainerAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.8, 1],
-                          }),
-                        },
-                        {
-                          translateY: strengthContainerAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [10, 0],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}
-                >
+                <View style={styles.strengthContainer}>
                   <View style={styles.strengthBar}>
-                    <Animated.View
+                    <View
                       style={[
                         styles.strengthProgress,
                         {
-                          width: progressAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ['0%', '100%'],
-                          }),
+                          width: `${getPasswordStrength(formData.password) * 100}%`,
                           backgroundColor: getStrengthColor(),
                         },
                       ]}
                     />
                   </View>
-                  <Animated.Text
+                  <Text
                     style={[
                       styles.strengthText,
                       {
                         color: getStrengthColor(),
-                        transform: [
-                          {
-                            scale: progressAnim.interpolate({
-                              inputRange: [0, 0.25, 0.5, 0.75, 1],
-                              outputRange: [1, 1.05, 1.05, 1.05, 1.1],
-                            }),
-                          },
-                        ],
                       }
                     ]}
                   >
                     {getStrengthText()}
-                  </Animated.Text>
-                </Animated.View>
+                  </Text>
+                </View>
               )}
             </View>
 
@@ -309,15 +224,8 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
             </View>
           </ScrollView>
 
-          {/* Enhanced Submit Button */}
-          <Animated.View
-            style={[
-              styles.buttonContainer,
-              {
-                transform: [{ scale: buttonScaleAnim }],
-              },
-            ]}
-          >
+          {/* Submit Button */}
+          <View style={styles.buttonContainer}>
             <Button
               title="Reset Password"
               onPress={handleSubmit}
@@ -326,7 +234,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               fullWidth
               loading={isLoading}
             />
-          </Animated.View>
+          </View>
         </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>

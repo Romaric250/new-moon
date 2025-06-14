@@ -37,7 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
   const handlePress = () => {
     if (disabled || loading) return;
 
-    createButtonPressAnimation(scaleAnim).start();
+    // Disabled animation to avoid conflicts
     onPress();
   };
   const getButtonStyle = () => {
@@ -115,24 +115,22 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      <TouchableOpacity
-        style={getButtonStyle()}
-        onPress={handlePress}
-        disabled={disabled || loading}
-        testID={testID}
-        activeOpacity={0.9}
-      >
-        {loading ? (
-          <ActivityIndicator
-            size="small"
-            color={variant === 'primary' ? Colors.white : Colors.primary}
-          />
-        ) : (
-          <Text style={getTextStyle()}>{title}</Text>
-        )}
-      </TouchableOpacity>
-    </Animated.View>
+    <TouchableOpacity
+      style={getButtonStyle()}
+      onPress={handlePress}
+      disabled={disabled || loading}
+      testID={testID}
+      activeOpacity={0.7}
+    >
+      {loading ? (
+        <ActivityIndicator
+          size="small"
+          color={variant === 'primary' ? Colors.white : Colors.primary}
+        />
+      ) : (
+        <Text style={getTextStyle()}>{title}</Text>
+      )}
+    </TouchableOpacity>
   );
 };
 

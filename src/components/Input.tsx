@@ -59,83 +59,35 @@ export const Input: React.FC<InputProps> = ({
 
   const handleFocus = () => {
     setIsFocused(true);
-    Animated.parallel([
-      Animated.timing(borderColorAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-      Animated.timing(labelColorAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-    ]).start();
+    // Disabled animations to avoid conflicts
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    Animated.parallel([
-      Animated.timing(borderColorAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-      Animated.timing(labelColorAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-    ]).start();
+    // Disabled animations to avoid conflicts
   };
 
   React.useEffect(() => {
-    if (error) {
-      Animated.timing(errorOpacityAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-
-      // Simple shake animation
-      Animated.sequence([
-        Animated.timing(shakeAnim, { toValue: 10, duration: 100, useNativeDriver: true }),
-        Animated.timing(shakeAnim, { toValue: -10, duration: 100, useNativeDriver: true }),
-        Animated.timing(shakeAnim, { toValue: 0, duration: 100, useNativeDriver: true }),
-      ]).start();
-    } else {
-      Animated.timing(errorOpacityAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    }
+    // Disabled error animations to avoid conflicts
   }, [error]);
 
-  const borderColor = borderColorAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.beige, Colors.primary],
-  });
-
-  const labelColor = labelColorAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.darkBeige, Colors.primary],
-  });
+  // Static colors to avoid animation conflicts
+  const borderColor = isFocused ? Colors.primary : Colors.beige;
+  const labelColor = isFocused ? Colors.primary : Colors.darkBeige;
 
   return (
     <View style={styles.container}>
-      <Animated.View
+      <View
         style={[
           styles.inputContainer,
           {
             borderColor,
-            transform: [{ translateX: shakeAnim }],
           }
         ]}
       >
-        <Animated.Text style={[styles.label, { color: labelColor }]}>
+        <Text style={[styles.label, { color: labelColor }]}>
           {label}
-        </Animated.Text>
+        </Text>
         <View style={styles.inputWrapper}>
           <TextInput
             style={[
@@ -170,27 +122,12 @@ export const Input: React.FC<InputProps> = ({
             </TouchableOpacity>
           )}
         </View>
-      </Animated.View>
+      </View>
       
       {error && (
-        <Animated.View
-          style={[
-            styles.errorContainer,
-            {
-              opacity: errorOpacityAnim,
-              transform: [
-                {
-                  translateY: errorOpacityAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-10, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
+        <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
-        </Animated.View>
+        </View>
       )}
     </View>
   );

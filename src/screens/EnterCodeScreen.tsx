@@ -1,63 +1,62 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  SafeAreaView, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
   TouchableOpacity,
   Animated,
-  Easing
+  Easing,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
 } from 'react-native';
 import { X } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Colors } from '../constants/colors';
+import {
+  getResponsiveStyles,
+  createEntranceAnimation,
+  createExitAnimation,
+  createButtonPressAnimation,
+  getResponsiveAnimationConfig,
+  screenDimensions
+} from '../utils';
 
 interface EnterCodeScreenProps {
   onClose: () => void;
   onSubmit: (code: string) => void;
 }
 
-export const EnterCodeScreen: React.FC<EnterCodeScreenProps> = ({ 
-  onClose, 
-  onSubmit 
+export const EnterCodeScreen: React.FC<EnterCodeScreenProps> = ({
+  onClose,
+  onSubmit
 }) => {
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
+  // Enhanced animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(50)).current;
-  const scaleAnim = useRef(new Animated.Value(0.95)).current;
+  const slideAnim = useRef(new Animated.Value(getResponsiveAnimationConfig().slideDistance)).current;
+  const scaleAnim = useRef(new Animated.Value(getResponsiveAnimationConfig().scaleFrom)).current;
+  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
+
+  const responsiveStyles = getResponsiveStyles();
 
   useEffect(() => {
-    // Entrance animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Enhanced entrance animation
+    createEntranceAnimation(fadeAnim, slideAnim, scaleAnim).start();
   }, []);
 
   const handleSubmit = async () => {
     if (code.length < 6) return;
-    
+
+    // Button press animation
+    createButtonPressAnimation(buttonScaleAnim).start();
+
     setIsLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
@@ -66,42 +65,31 @@ export const EnterCodeScreen: React.FC<EnterCodeScreenProps> = ({
   };
 
   const handleClose = () => {
-    // Exit animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 50,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 0.95,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
+    // Enhanced exit animation
+    createExitAnimation(fadeAnim, slideAnim, scaleAnim).start(() => {
       onClose();
     });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View 
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [
-              { translateY: slideAnim },
-              { scale: scaleAnim }
-            ],
-          },
-        ]}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
+        <Animated.View
+          style={[
+            styles.content,
+            {
+              opacity: fadeAnim,
+              transform: [
+                { translateY: slideAnim },
+                { scale: scaleAnim }
+              ],
+            },
+          ]}
+        >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity 
@@ -115,40 +103,56 @@ export const EnterCodeScreen: React.FC<EnterCodeScreenProps> = ({
           <View style={styles.placeholder} />
         </View>
 
-        {/* Content */}
-        <View style={styles.formContainer}>
-          <Text style={styles.subtitle}>Enter your admission code</Text>
-          
-          <View style={styles.inputContainer}>
-            <Input
-              label=""
-              value={code}
-              onChangeText={setCode}
-              placeholder="XXXXXX"
-              keyboardType="default"
-              autoCapitalize="characters"
-              testID="admission-code-input"
+          {/* Content */}
+          <ScrollView
+            style={styles.formContainer}
+            contentContainerStyle={styles.formContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            bounces={false}
+          >
+            <Text style={[styles.subtitle, responsiveStyles.subtitle]}>
+              Enter your admission code
+            </Text>
+
+            <View style={styles.inputContainer}>
+              <Input
+                label=""
+                value={code}
+                onChangeText={setCode}
+                placeholder="XXXXXX"
+                keyboardType="default"
+                autoCapitalize="characters"
+                testID="admission-code-input"
+              />
+            </View>
+
+            <Text style={[styles.helpText, responsiveStyles.description]}>
+              This code was sent to your email address.
+            </Text>
+          </ScrollView>
+
+          {/* Enhanced Submit Button */}
+          <Animated.View
+            style={[
+              styles.buttonContainer,
+              {
+                transform: [{ scale: buttonScaleAnim }],
+              },
+            ]}
+          >
+            <Button
+              title="Submit"
+              onPress={handleSubmit}
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={isLoading}
+              disabled={code.length < 6}
             />
-          </View>
-
-          <Text style={styles.helpText}>
-            This code was sent to your email address.
-          </Text>
-        </View>
-
-        {/* Submit Button */}
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Submit"
-            onPress={handleSubmit}
-            variant="primary"
-            size="lg"
-            fullWidth
-            loading={isLoading}
-            disabled={code.length < 6}
-          />
-        </View>
-      </Animated.View>
+          </Animated.View>
+        </Animated.View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -158,10 +162,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.cream,
   },
+  keyboardAvoid: {
+    flex: 1,
+  },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: screenDimensions.width > 400 ? 32 : 24,
+    paddingVertical: screenDimensions.height > 700 ? 24 : 16,
   },
   header: {
     flexDirection: 'row',
@@ -192,24 +199,29 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
-    paddingTop: 24,
+  },
+  formContent: {
+    paddingTop: screenDimensions.height > 700 ? 32 : 24,
+    paddingBottom: 20,
+    flexGrow: 1,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: screenDimensions.width > 400 ? 28 : 24,
     fontWeight: 'bold',
     color: '#111827',
-    marginBottom: 32,
-    lineHeight: 32,
+    marginBottom: screenDimensions.height > 700 ? 40 : 32,
+    lineHeight: screenDimensions.width > 400 ? 36 : 32,
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: screenDimensions.height > 700 ? 24 : 16,
   },
   helpText: {
-    fontSize: 14,
+    fontSize: screenDimensions.width > 400 ? 16 : 14,
     color: '#6B7280',
-    lineHeight: 20,
+    lineHeight: screenDimensions.width > 400 ? 24 : 20,
   },
   buttonContainer: {
-    paddingBottom: 32,
+    paddingBottom: screenDimensions.height > 700 ? 40 : 32,
+    paddingTop: 16,
   },
 });

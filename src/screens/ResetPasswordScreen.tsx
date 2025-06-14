@@ -1,17 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  SafeAreaView, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
   TouchableOpacity,
   Animated,
-  Easing
+  Easing,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
 } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Colors } from '../constants/colors';
+import { AnimationConfig } from '../utils';
 
 interface ResetPasswordScreenProps {
   onBack: () => void;
@@ -19,10 +24,12 @@ interface ResetPasswordScreenProps {
   token: string;
 }
 
-export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({ 
-  onBack, 
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
+  onBack,
   onResetPassword,
-  token 
+  token
 }) => {
   const [formData, setFormData] = useState({
     password: '',
@@ -30,37 +37,69 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  
+
+  // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
+  const headerScaleAnim = useRef(new Animated.Value(0.8)).current;
+  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
+  const strengthContainerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Entrance animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
+    // Enhanced entrance animation with stagger
+    Animated.stagger(150, [
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 600,
+          easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 600,
+          easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.spring(headerScaleAnim, {
         toValue: 1,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
+        tension: 100,
+        friction: 8,
         useNativeDriver: true,
       }),
     ]).start();
   }, []);
 
-  // Password strength indicator
+  // Enhanced password strength indicator with smooth animations
   useEffect(() => {
     const strength = getPasswordStrength(formData.password);
-    Animated.timing(progressAnim, {
+
+    // Animate progress bar (must use useNativeDriver: false for width)
+    Animated.spring(progressAnim, {
       toValue: strength,
-      duration: 300,
-      useNativeDriver: false,
+      tension: 80,
+      friction: 8,
+      useNativeDriver: false, // Required for width animations
     }).start();
+
+    // Animate strength container appearance (can use native driver for opacity/transform)
+    if (formData.password.length > 0) {
+      Animated.spring(strengthContainerAnim, {
+        toValue: 1,
+        tension: 100,
+        friction: 8,
+        useNativeDriver: true, // Safe for opacity and transform
+      }).start();
+    } else {
+      Animated.timing(strengthContainerAnim, {
+        toValue: 0,
+        duration: 200,
+        easing: AnimationConfig.easing.quick,
+        useNativeDriver: true, // Safe for opacity and transform
+      }).start();
+    }
   }, [formData.password]);
 
   const getPasswordStrength = (password: string): number => {
@@ -92,14 +131,29 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    
+
+    // Button press animation
+    Animated.sequence([
+      Animated.timing(buttonScaleAnim, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(buttonScaleAnim, {
+        toValue: 1,
+        tension: 300,
+        friction: 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
     setIsLoading(true);
-    
-    // Simulate API call
+
+    // Simulate API call with realistic timing
     setTimeout(() => {
       setIsLoading(false);
       onResetPassword(formData.password);
-    }, 1500);
+    }, 2000);
   };
 
   const updateFormData = (field: string, value: string) => {
@@ -128,36 +182,54 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View 
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={onBack}
-            activeOpacity={0.7}
+        <Animated.View
+          style={[
+            styles.content,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          {/* Header */}
+          <Animated.View
+            style={[
+              styles.header,
+              {
+                transform: [{ scale: headerScaleAnim }],
+              },
+            ]}
           >
-            <ArrowLeft size={24} color="#111827" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Reset Password</Text>
-        </View>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={onBack}
+              activeOpacity={0.6}
+            >
+              <ArrowLeft size={24} color="#111827" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Reset Password</Text>
+          </Animated.View>
 
-        {/* Content */}
-        <View style={styles.formContainer}>
-          <Text style={styles.title}>Create new password</Text>
-          
-          <Text style={styles.description}>
-            Your new password must be different from previously used passwords
-          </Text>
-          
-          <View style={styles.inputsContainer}>
+          {/* Content */}
+          <ScrollView
+            style={styles.formContainer}
+            contentContainerStyle={styles.formContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            bounces={false}
+          >
+            <Text style={styles.title}>Create new password</Text>
+
+            <Text style={styles.description}>
+              Your new password must be different from previously used passwords
+            </Text>
+
+            <View style={styles.inputsContainer}>
             <View>
               <Input
                 label="New password"
@@ -170,11 +242,32 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 testID="new-password-input"
               />
               
-              {/* Password Strength Indicator */}
+              {/* Enhanced Password Strength Indicator */}
               {formData.password.length > 0 && (
-                <View style={styles.strengthContainer}>
+                <Animated.View
+                  style={[
+                    styles.strengthContainer,
+                    {
+                      opacity: strengthContainerAnim,
+                      transform: [
+                        {
+                          scale: strengthContainerAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.8, 1],
+                          }),
+                        },
+                        {
+                          translateY: strengthContainerAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [10, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
                   <View style={styles.strengthBar}>
-                    <Animated.View 
+                    <Animated.View
                       style={[
                         styles.strengthProgress,
                         {
@@ -187,10 +280,25 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                       ]}
                     />
                   </View>
-                  <Text style={[styles.strengthText, { color: getStrengthColor() }]}>
+                  <Animated.Text
+                    style={[
+                      styles.strengthText,
+                      {
+                        color: getStrengthColor(),
+                        transform: [
+                          {
+                            scale: progressAnim.interpolate({
+                              inputRange: [0, 0.25, 0.5, 0.75, 1],
+                              outputRange: [1, 1.05, 1.05, 1.05, 1.1],
+                            }),
+                          },
+                        ],
+                      }
+                    ]}
+                  >
                     {getStrengthText()}
-                  </Text>
-                </View>
+                  </Animated.Text>
+                </Animated.View>
               )}
             </View>
 
@@ -204,21 +312,29 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               error={errors.confirmPassword}
               testID="confirm-password-input"
             />
-          </View>
-        </View>
+            </View>
+          </ScrollView>
 
-        {/* Submit Button */}
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Reset Password"
-            onPress={handleSubmit}
-            variant="primary"
-            size="lg"
-            fullWidth
-            loading={isLoading}
-          />
-        </View>
-      </Animated.View>
+          {/* Enhanced Submit Button */}
+          <Animated.View
+            style={[
+              styles.buttonContainer,
+              {
+                transform: [{ scale: buttonScaleAnim }],
+              },
+            ]}
+          >
+            <Button
+              title="Reset Password"
+              onPress={handleSubmit}
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={isLoading}
+            />
+          </Animated.View>
+        </Animated.View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -228,10 +344,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.cream,
   },
+  keyboardAvoid: {
+    flex: 1,
+  },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: screenWidth > 400 ? 32 : 24,
+    paddingVertical: screenHeight > 700 ? 24 : 16,
   },
   header: {
     flexDirection: 'row',
@@ -259,46 +378,66 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
-    paddingTop: 24,
+  },
+  formContent: {
+    paddingTop: screenHeight > 700 ? 32 : 24,
+    paddingBottom: 20,
+    flexGrow: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: screenWidth > 400 ? 28 : 24,
     fontWeight: 'bold',
     color: '#111827',
-    marginBottom: 8,
+    marginBottom: screenHeight > 700 ? 12 : 8,
+    lineHeight: screenWidth > 400 ? 36 : 32,
   },
   description: {
-    fontSize: 14,
+    fontSize: screenWidth > 400 ? 16 : 14,
     color: '#6B7280',
-    lineHeight: 20,
-    marginBottom: 32,
+    lineHeight: screenWidth > 400 ? 24 : 20,
+    marginBottom: screenHeight > 700 ? 40 : 32,
   },
   inputsContainer: {
-    gap: 8,
+    gap: screenHeight > 700 ? 12 : 8,
   },
   strengthContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 8,
+    marginTop: screenHeight > 700 ? 12 : 8,
+    marginBottom: screenHeight > 700 ? 16 : 12,
+    paddingHorizontal: 4,
   },
   strengthBar: {
     flex: 1,
-    height: 4,
+    height: screenWidth > 400 ? 6 : 4,
     backgroundColor: '#E5E7EB',
-    borderRadius: 2,
-    marginRight: 12,
+    borderRadius: screenWidth > 400 ? 3 : 2,
+    marginRight: screenWidth > 400 ? 16 : 12,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
   strengthProgress: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: screenWidth > 400 ? 3 : 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
   strengthText: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: screenWidth > 400 ? 14 : 12,
+    fontWeight: '600',
+    minWidth: screenWidth > 400 ? 60 : 50,
+    textAlign: 'right',
   },
   buttonContainer: {
-    paddingBottom: 32,
+    paddingBottom: screenHeight > 700 ? 40 : 32,
+    paddingTop: 16,
+    paddingHorizontal: 4,
   },
 });

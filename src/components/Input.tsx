@@ -1,15 +1,24 @@
 import React, { useState, useRef } from 'react';
-import { 
-  TextInput, 
-  View, 
-  Text, 
-  StyleSheet, 
-  Animated, 
-  TouchableOpacity 
+import {
+  TextInput,
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  TouchableOpacity
 } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { Colors } from '../constants/colors';
 import { BaseComponentProps } from '../types';
+import {
+  getResponsiveStyles,
+  AnimationConfig,
+  createErrorShakeAnimation,
+  iconSize,
+  fontSize,
+  borderRadius,
+  spacing
+} from '../utils';
 
 interface InputProps extends BaseComponentProps {
   label: string;
@@ -37,38 +46,66 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  // Enhanced animation values
   const animatedValue = useRef(new Animated.Value(0)).current;
   const errorAnimatedValue = useRef(new Animated.Value(0)).current;
+  const shakeAnimatedValue = useRef(new Animated.Value(0)).current;
+  const scaleAnimatedValue = useRef(new Animated.Value(1)).current;
+
+  const responsiveStyles = getResponsiveStyles();
 
   const handleFocus = () => {
     setIsFocused(true);
+    // Separate animations to avoid native driver conflicts
     Animated.timing(animatedValue, {
       toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
+      duration: AnimationConfig.timing.normal,
+      easing: AnimationConfig.easing.smooth,
+      useNativeDriver: false, // Must be false for color/border animations
+    }).start();
+
+    Animated.spring(scaleAnimatedValue, {
+      toValue: 1.02,
+      ...AnimationConfig.spring.gentle,
+      useNativeDriver: true, // Can be true for transform animations
     }).start();
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    // Separate animations to avoid native driver conflicts
     Animated.timing(animatedValue, {
       toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
+      duration: AnimationConfig.timing.normal,
+      easing: AnimationConfig.easing.smooth,
+      useNativeDriver: false, // Must be false for color/border animations
+    }).start();
+
+    Animated.spring(scaleAnimatedValue, {
+      toValue: 1,
+      ...AnimationConfig.spring.gentle,
+      useNativeDriver: true, // Can be true for transform animations
     }).start();
   };
 
   React.useEffect(() => {
     if (error) {
+      // Show error animation
       Animated.timing(errorAnimatedValue, {
         toValue: 1,
-        duration: 300,
+        duration: AnimationConfig.timing.normal,
+        easing: AnimationConfig.easing.smooth,
         useNativeDriver: true,
       }).start();
+
+      // Shake animation separately
+      createErrorShakeAnimation(shakeAnimatedValue).start();
     } else {
       Animated.timing(errorAnimatedValue, {
         toValue: 0,
-        duration: 200,
+        duration: AnimationConfig.timing.fast,
+        easing: AnimationConfig.easing.quick,
         useNativeDriver: true,
       }).start();
     }
@@ -86,7 +123,18 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.inputContainer, { borderColor }]}>
+      <Animated.View
+        style={[
+          styles.inputContainer,
+          {
+            borderColor,
+            transform: [
+              { scale: scaleAnimatedValue },
+              { translateX: shakeAnimatedValue }
+            ],
+          }
+        ]}
+      >
         <Animated.Text style={[styles.label, { color: labelColor }]}>
           {label}
         </Animated.Text>
@@ -94,6 +142,7 @@ export const Input: React.FC<InputProps> = ({
           <TextInput
             style={[
               styles.input,
+              responsiveStyles.input,
               disabled && styles.disabledInput,
               error && styles.errorInput,
             ]}
@@ -113,12 +162,12 @@ export const Input: React.FC<InputProps> = ({
             <TouchableOpacity
               style={styles.eyeIcon}
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-              activeOpacity={0.7}
+              activeOpacity={0.6}
             >
               {isPasswordVisible ? (
-                <EyeOff size={20} color={Colors.darkBeige} />
+                <EyeOff size={iconSize.md} color={Colors.darkBeige} />
               ) : (
-                <Eye size={20} color={Colors.darkBeige} />
+                <Eye size={iconSize.md} color={Colors.darkBeige} />
               )}
             </TouchableOpacity>
           )}
@@ -151,18 +200,23 @@ export const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   inputContainer: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: borderRadius.lg,
     backgroundColor: Colors.cream,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm + 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   label: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     fontWeight: '500',
     marginBottom: 4,
   },
@@ -172,9 +226,10 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: fontSize.lg,
     color: '#111827',
     paddingVertical: 4,
+    minHeight: 24,
   },
   disabledInput: {
     opacity: 0.6,
@@ -183,14 +238,16 @@ const styles = StyleSheet.create({
     color: '#EF4444',
   },
   eyeIcon: {
-    padding: 4,
+    padding: spacing.xs,
+    borderRadius: borderRadius.sm,
   },
   errorContainer: {
-    marginTop: 4,
-    marginLeft: 4,
+    marginTop: spacing.xs,
+    marginLeft: spacing.xs,
   },
   errorText: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     color: '#EF4444',
+    fontWeight: '500',
   },
 });

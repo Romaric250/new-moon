@@ -1,7 +1,15 @@
-import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, Animated } from 'react-native';
 import { BaseComponentProps } from '../types';
 import { Colors } from '../constants/colors';
+import {
+  getResponsiveStyles,
+  createButtonPressAnimation,
+  fontSize,
+  borderRadius,
+  spacing,
+  buttonHeight
+} from '../utils';
 
 interface ButtonProps extends BaseComponentProps {
   title: string;
@@ -23,6 +31,15 @@ export const Button: React.FC<ButtonProps> = ({
   fullWidth = false,
   testID,
 }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const responsiveStyles = getResponsiveStyles();
+
+  const handlePress = () => {
+    if (disabled || loading) return;
+
+    createButtonPressAnimation(scaleAnim).start();
+    onPress();
+  };
   const getButtonStyle = () => {
     const baseStyle = [styles.button];
 
@@ -98,22 +115,24 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <TouchableOpacity
-      style={getButtonStyle()}
-      onPress={onPress}
-      disabled={disabled || loading}
-      testID={testID}
-      activeOpacity={0.8}
-    >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === 'primary' ? Colors.white : Colors.primary}
-        />
-      ) : (
-        <Text style={getTextStyle()}>{title}</Text>
-      )}
-    </TouchableOpacity>
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity
+        style={getButtonStyle()}
+        onPress={handlePress}
+        disabled={disabled || loading}
+        testID={testID}
+        activeOpacity={0.9}
+      >
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={variant === 'primary' ? Colors.white : Colors.primary}
+          />
+        ) : (
+          <Text style={getTextStyle()}>{title}</Text>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
@@ -122,6 +141,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   // Variant styles
   primaryButton: {
@@ -138,19 +162,22 @@ const styles = StyleSheet.create({
   },
   // Size styles
   smallButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.lg,
+    minHeight: buttonHeight.sm,
   },
   mediumButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.lg,
+    minHeight: buttonHeight.md,
   },
   largeButton: {
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 16,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md + 4,
+    borderRadius: borderRadius.lg,
+    minHeight: buttonHeight.lg,
   },
   // Layout styles
   fullWidth: {
@@ -176,12 +203,12 @@ const styles = StyleSheet.create({
   },
   // Size text styles
   smallText: {
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
   mediumText: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   largeText: {
-    fontSize: 18,
+    fontSize: fontSize.xl,
   },
 });

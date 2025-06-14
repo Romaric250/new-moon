@@ -1,18 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  SafeAreaView, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
   TouchableOpacity,
   Animated,
-  Easing,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { HelpCircle } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Colors } from '../constants/colors';
+import {
+  getResponsiveStyles,
+  createEntranceAnimation,
+  createButtonPressAnimation,
+  getResponsiveAnimationConfig,
+  screenDimensions
+} from '../utils';
 
 interface CreateAccountScreenProps {
   onCreateAccount: (data: {
@@ -22,8 +30,8 @@ interface CreateAccountScreenProps {
   }) => void;
 }
 
-export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ 
-  onCreateAccount 
+export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
+  onCreateAccount
 }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -33,26 +41,17 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  
+
+  // Enhanced animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
+  const slideAnim = useRef(new Animated.Value(getResponsiveAnimationConfig().slideDistance)).current;
+  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
+
+  const responsiveStyles = getResponsiveStyles();
 
   useEffect(() => {
-    // Staggered entrance animation
-    Animated.stagger(100, [
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 500,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Enhanced entrance animation
+    createEntranceAnimation(fadeAnim, slideAnim).start();
   }, []);
 
   const validateForm = () => {
@@ -84,9 +83,12 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    
+
+    // Button press animation
+    createButtonPressAnimation(buttonScaleAnim).start();
+
     setIsLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);

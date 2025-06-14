@@ -16,7 +16,11 @@ import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Colors } from '../constants/colors';
-import { AnimationConfig } from '../utils';
+import {
+  AnimationConfig,
+  createSafeTransformAnimation,
+  createProgressAnimation
+} from '../utils';
 
 interface ResetPasswordScreenProps {
   onBack: () => void;
@@ -76,15 +80,10 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   useEffect(() => {
     const strength = getPasswordStrength(formData.password);
 
-    // Animate progress bar (must use useNativeDriver: false for width)
-    Animated.spring(progressAnim, {
-      toValue: strength,
-      tension: 80,
-      friction: 8,
-      useNativeDriver: false, // Required for width animations
-    }).start();
+    // Animate progress bar using safe function
+    createProgressAnimation(progressAnim, strength).start();
 
-    // Animate strength container appearance (can use native driver for opacity/transform)
+    // Animate strength container appearance
     if (formData.password.length > 0) {
       Animated.spring(strengthContainerAnim, {
         toValue: 1,
@@ -93,12 +92,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
         useNativeDriver: true, // Safe for opacity and transform
       }).start();
     } else {
-      Animated.timing(strengthContainerAnim, {
-        toValue: 0,
-        duration: 200,
-        easing: AnimationConfig.easing.quick,
-        useNativeDriver: true, // Safe for opacity and transform
-      }).start();
+      createSafeTransformAnimation(strengthContainerAnim, 0, 200).start();
     }
   }, [formData.password]);
 

@@ -14,6 +14,8 @@ import {
   getResponsiveStyles,
   AnimationConfig,
   createErrorShakeAnimation,
+  createSafeColorAnimation,
+  createSafeTransformAnimation,
   iconSize,
   fontSize,
   borderRadius,
@@ -47,76 +49,75 @@ export const Input: React.FC<InputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // Enhanced animation values
-  const animatedValue = useRef(new Animated.Value(0)).current;
-  const errorAnimatedValue = useRef(new Animated.Value(0)).current;
-  const shakeAnimatedValue = useRef(new Animated.Value(0)).current;
-  const scaleAnimatedValue = useRef(new Animated.Value(1)).current;
+  // Simplified animation values to avoid conflicts
+  const borderColorAnim = useRef(new Animated.Value(0)).current;
+  const labelColorAnim = useRef(new Animated.Value(0)).current;
+  const errorOpacityAnim = useRef(new Animated.Value(0)).current;
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
   const responsiveStyles = getResponsiveStyles();
 
   const handleFocus = () => {
     setIsFocused(true);
-    // Separate animations to avoid native driver conflicts
-    Animated.timing(animatedValue, {
-      toValue: 1,
-      duration: AnimationConfig.timing.normal,
-      easing: AnimationConfig.easing.smooth,
-      useNativeDriver: false, // Must be false for color/border animations
-    }).start();
-
-    Animated.spring(scaleAnimatedValue, {
-      toValue: 1.02,
-      ...AnimationConfig.spring.gentle,
-      useNativeDriver: true, // Can be true for transform animations
-    }).start();
+    Animated.parallel([
+      Animated.timing(borderColorAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(labelColorAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    // Separate animations to avoid native driver conflicts
-    Animated.timing(animatedValue, {
-      toValue: 0,
-      duration: AnimationConfig.timing.normal,
-      easing: AnimationConfig.easing.smooth,
-      useNativeDriver: false, // Must be false for color/border animations
-    }).start();
-
-    Animated.spring(scaleAnimatedValue, {
-      toValue: 1,
-      ...AnimationConfig.spring.gentle,
-      useNativeDriver: true, // Can be true for transform animations
-    }).start();
+    Animated.parallel([
+      Animated.timing(borderColorAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(labelColorAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
   React.useEffect(() => {
     if (error) {
-      // Show error animation
-      Animated.timing(errorAnimatedValue, {
+      Animated.timing(errorOpacityAnim, {
         toValue: 1,
-        duration: AnimationConfig.timing.normal,
-        easing: AnimationConfig.easing.smooth,
+        duration: 300,
         useNativeDriver: true,
       }).start();
 
-      // Shake animation separately
-      createErrorShakeAnimation(shakeAnimatedValue).start();
+      // Simple shake animation
+      Animated.sequence([
+        Animated.timing(shakeAnim, { toValue: 10, duration: 100, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -10, duration: 100, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 0, duration: 100, useNativeDriver: true }),
+      ]).start();
     } else {
-      Animated.timing(errorAnimatedValue, {
+      Animated.timing(errorOpacityAnim, {
         toValue: 0,
-        duration: AnimationConfig.timing.fast,
-        easing: AnimationConfig.easing.quick,
+        duration: 200,
         useNativeDriver: true,
       }).start();
     }
   }, [error]);
 
-  const borderColor = animatedValue.interpolate({
+  const borderColor = borderColorAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [Colors.beige, Colors.primary],
   });
 
-  const labelColor = animatedValue.interpolate({
+  const labelColor = labelColorAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [Colors.darkBeige, Colors.primary],
   });
@@ -128,10 +129,7 @@ export const Input: React.FC<InputProps> = ({
           styles.inputContainer,
           {
             borderColor,
-            transform: [
-              { scale: scaleAnimatedValue },
-              { translateX: shakeAnimatedValue }
-            ],
+            transform: [{ translateX: shakeAnim }],
           }
         ]}
       >
@@ -179,10 +177,10 @@ export const Input: React.FC<InputProps> = ({
           style={[
             styles.errorContainer,
             {
-              opacity: errorAnimatedValue,
+              opacity: errorOpacityAnim,
               transform: [
                 {
-                  translateY: errorAnimatedValue.interpolate({
+                  translateY: errorOpacityAnim.interpolate({
                     inputRange: [0, 1],
                     outputRange: [-10, 0],
                   }),

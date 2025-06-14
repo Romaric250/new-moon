@@ -16,6 +16,7 @@ import {
   Users,
   Trophy,
   ChevronRight,
+  Check,
 } from 'lucide-react-native';
 import { Colors } from '../constants/colors';
 
@@ -44,6 +45,7 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
 }) => {
   const [selectedBatch, setSelectedBatch] = useState<string | null>(null);
   const [scaleAnim] = useState(new Animated.Value(1));
+  const [showContinueButton, setShowContinueButton] = useState(false);
 
   const batches: Batch[] = [
     {
@@ -67,39 +69,43 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
 
   const handleBatchSelect = (batch: Batch) => {
     if (!batch.available) return;
-    
+
     setSelectedBatch(batch.id);
-    
+    setShowContinueButton(true);
+
     // Animate selection
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.95,
-        duration: 100,
+        duration: 150,
         useNativeDriver: true,
       }),
       Animated.timing(scaleAnim, {
         toValue: 1,
-        duration: 100,
+        duration: 150,
         useNativeDriver: true,
       }),
     ]).start();
+  };
 
-    // Navigate to create account after a short delay
-    setTimeout(() => {
-      onNavigate('createAccount', { batch: batch.name });
-    }, 300);
+  const handleContinue = () => {
+    if (selectedBatch) {
+      const batch = batches.find(b => b.id === selectedBatch);
+      onNavigate('createAccount', { batch: batch?.name });
+    }
   };
 
   const renderBatch = (batch: Batch) => {
     const IconComponent = batch.icon;
     const isSelected = selectedBatch === batch.id;
-    
+
     return (
       <Animated.View
         key={batch.id}
         style={[
           styles.batchCard,
           !batch.available && styles.disabledCard,
+          isSelected && styles.selectedCard,
           isSelected && { transform: [{ scale: scaleAnim }] },
         ]}
       >
@@ -107,7 +113,10 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
           onPress={() => handleBatchSelect(batch)}
           disabled={!batch.available}
           activeOpacity={0.9}
-          style={styles.batchContent}
+          style={[
+            styles.batchContent,
+            isSelected && styles.selectedContent,
+          ]}
         >
           {/* Background Gradient Effect */}
           <View
@@ -119,16 +128,29 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
           
           {/* Header */}
           <View style={styles.batchHeader}>
-            <View style={[styles.iconContainer, { backgroundColor: batch.color }]}>
+            <View style={[
+              styles.iconContainer,
+              { backgroundColor: batch.color },
+              isSelected && styles.selectedIconContainer,
+            ]}>
               <IconComponent size={32} color={Colors.white} />
             </View>
-            
+
             <View style={styles.batchTitleContainer}>
-              <Text style={styles.batchName}>{batch.name}</Text>
+              <Text style={[
+                styles.batchName,
+                isSelected && styles.selectedText,
+              ]}>
+                {batch.name}
+              </Text>
               <Text style={styles.batchTitle}>{batch.title}</Text>
             </View>
-            
-            {batch.available ? (
+
+            {isSelected ? (
+              <View style={styles.selectedIndicator}>
+                <Check size={24} color={batch.color} />
+              </View>
+            ) : batch.available ? (
               <ChevronRight size={24} color={batch.color} />
             ) : (
               <View style={styles.comingSoonBadge}>
@@ -199,6 +221,20 @@ export const BatchSelectionScreen: React.FC<BatchSelectionScreenProps> = ({
         <View style={styles.batchesContainer}>
           {batches.map(renderBatch)}
         </View>
+
+        {/* Continue Button */}
+        {showContinueButton && (
+          <Animated.View style={styles.continueButtonContainer}>
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={handleContinue}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.continueButtonText}>Continue to Registration</Text>
+              <ChevronRight size={20} color={Colors.white} />
+            </TouchableOpacity>
+          </Animated.View>
+        )}
 
         {/* Footer Note */}
         <View style={styles.footerNote}>
@@ -280,9 +316,21 @@ const styles = StyleSheet.create({
   disabledCard: {
     opacity: 0.6,
   },
+  selectedCard: {
+    borderWidth: 3,
+    borderColor: '#F59E0B',
+    backgroundColor: '#FFFBEB',
+    shadowColor: '#F59E0B',
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 12,
+  },
   batchContent: {
     position: 'relative',
     padding: 24,
+  },
+  selectedContent: {
+    backgroundColor: 'transparent',
   },
   gradientBackground: {
     position: 'absolute',
@@ -305,6 +353,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
+  selectedIconContainer: {
+    shadowColor: '#F59E0B',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
   batchTitleContainer: {
     flex: 1,
   },
@@ -314,10 +372,21 @@ const styles = StyleSheet.create({
     color: '#111827',
     marginBottom: 4,
   },
+  selectedText: {
+    color: '#F59E0B',
+  },
   batchTitle: {
     fontSize: 14,
     color: '#6B7280',
     fontWeight: '500',
+  },
+  selectedIndicator: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FEF3C7',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   batchDescription: {
     fontSize: 16,
@@ -383,5 +452,32 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     flex: 1,
     lineHeight: 20,
+  },
+  continueButtonContainer: {
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  continueButton: {
+    backgroundColor: '#F59E0B',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    shadowColor: '#F59E0B',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  continueButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.white,
+    marginRight: 8,
   },
 });

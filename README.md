@@ -4,7 +4,9 @@ Project Moon is an exclusive e-learning platform designed for high-achieving Cam
 
 ## 🚀 Features
 
-- **Modern UI/UX**: Built with React Native and NativeWind for a beautiful, responsive design
+- **Modern UI/UX**: Built with React Native and beautiful, responsive design
+- **Complete Authentication Flow**: Onboarding, admission code, registration, login, password reset
+- **Subtle Animations**: Professional, minimalistic animations throughout the app
 - **TypeScript**: Full type safety for better development experience
 - **Scalable Architecture**: Well-structured codebase following enterprise-level patterns
 - **Cross-Platform**: Runs on iOS, Android, and Web
@@ -78,21 +80,39 @@ npm run web
 ```
 src/
 ├── components/          # Reusable UI components
-│   ├── Button.tsx
+│   ├── Button.tsx      # Customizable button component
+│   ├── Input.tsx       # Animated input component with validation
 │   └── index.ts
 ├── screens/            # Screen components
-│   ├── OnboardingScreen.tsx
-│   ├── HomeScreen.tsx
+│   ├── OnboardingScreen.tsx     # Welcome/intro screen
+│   ├── EnterCodeScreen.tsx      # Admission code entry
+│   ├── CreateAccountScreen.tsx  # User registration
+│   ├── LoginScreen.tsx          # User login
+│   ├── ForgotPasswordScreen.tsx # Password reset request
+│   ├── ResetPasswordScreen.tsx  # New password creation
+│   ├── HomeScreen.tsx           # Main dashboard
 │   └── index.ts
 ├── constants/          # App constants and theme
-│   ├── colors.ts
-│   └── theme.ts
+│   ├── colors.ts       # Color palette
+│   └── theme.ts        # Theme configuration
 ├── types/              # TypeScript type definitions
 │   └── index.ts
 ├── navigation/         # Navigation configuration (future)
 ├── utils/              # Utility functions (future)
 └── hooks/              # Custom React hooks (future)
 ```
+
+## 🎯 Authentication Flow
+
+The app includes a complete authentication flow with smooth animations:
+
+1. **Onboarding Screen** → Welcome message with "Get Started" or "Log In" options
+2. **Enter Code Screen** → Admission code verification (6-character code)
+3. **Create Account Screen** → User registration with form validation
+4. **Login Screen** → User authentication with "Forgot Password" option
+5. **Forgot Password Screen** → Email-based password reset request
+6. **Reset Password Screen** → New password creation with strength indicator
+7. **Home Screen** → Main application dashboard
 
 ## 🔮 Future Enhancements
 

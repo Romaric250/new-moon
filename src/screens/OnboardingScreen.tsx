@@ -1,7 +1,26 @@
 import React from 'react';
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Dimensions, PixelRatio } from 'react-native';
 import { Button } from '../components/Button';
 import { Colors } from '../constants/colors';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+// Responsive helper functions
+const wp = (percentage: number) => {
+  const value = (percentage * screenWidth) / 100;
+  return Math.round(PixelRatio.roundToNearestPixel(value));
+};
+
+const hp = (percentage: number) => {
+  const value = (percentage * screenHeight) / 100;
+  return Math.round(PixelRatio.roundToNearestPixel(value));
+};
+
+const normalize = (size: number) => {
+  const scale = screenWidth / 375; // Base width (iPhone X)
+  const newSize = size * scale;
+  return Math.round(PixelRatio.roundToNearestPixel(newSize));
+};
 
 interface OnboardingScreenProps {
   onNext: () => void;
@@ -78,101 +97,111 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingHorizontal: wp(6.4), // 24px on 375px screen
+    paddingVertical: hp(4), // 32px on 800px screen
   },
   illustrationContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    minHeight: hp(45), // Minimum 45% of screen height
   },
   illustrationFrame: {
-    width: 320,
-    height: 320,
+    width: wp(85.3), // 320px on 375px screen, scales responsively
+    height: wp(85.3), // Keep it square
+    maxWidth: 350, // Maximum size for larger screens
+    maxHeight: 350,
     backgroundColor: Colors.white,
-    borderRadius: 24,
-    marginBottom: 32,
+    borderRadius: normalize(24),
+    marginBottom: hp(4), // 32px on 800px screen
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: normalize(4) },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowRadius: normalize(8),
     elevation: 5,
   },
   illustration: {
-    width: 256,
-    height: 256,
+    width: wp(68.3), // 256px on 375px screen
+    height: wp(68.3), // Keep it square
+    maxWidth: 280,
+    maxHeight: 280,
     backgroundColor: Colors.primary,
-    borderRadius: 16,
+    borderRadius: normalize(16),
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   illustrationInner: {
-    width: 128,
-    height: 128,
+    width: wp(34.1), // 128px on 375px screen
+    height: wp(34.1), // Keep it square
+    maxWidth: 140,
+    maxHeight: 140,
     backgroundColor: Colors.white,
-    borderRadius: 12,
+    borderRadius: normalize(12),
     opacity: 0.9,
   },
   dot: {
-    width: 24,
-    height: 24,
+    width: normalize(24),
+    height: normalize(24),
     backgroundColor: Colors.white,
-    borderRadius: 12,
+    borderRadius: normalize(12),
     position: 'absolute',
   },
   dotTopLeft: {
-    top: 32,
-    left: 32,
+    top: normalize(32),
+    left: normalize(32),
   },
   dotBottomRight: {
-    bottom: 32,
-    right: 32,
+    bottom: normalize(32),
+    right: normalize(32),
   },
   pagination: {
     flexDirection: 'row',
-    marginBottom: 48,
+    marginBottom: hp(6), // 48px on 800px screen
   },
   paginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: normalize(8),
+    height: normalize(8),
+    borderRadius: normalize(4),
     backgroundColor: '#D1D5DB',
-    marginHorizontal: 4,
+    marginHorizontal: normalize(4),
   },
   paginationDotActive: {
     backgroundColor: Colors.primary,
   },
   textContainer: {
-    marginBottom: 32,
+    marginBottom: hp(4), // 32px on 800px screen
+    paddingHorizontal: wp(2.7), // 10px on 375px screen
   },
   title: {
-    fontSize: 30,
+    fontSize: normalize(30),
     fontWeight: 'bold',
     color: '#111827',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: hp(3), // 24px on 800px screen
+    lineHeight: normalize(36),
   },
   description: {
-    fontSize: 16,
+    fontSize: normalize(16),
     color: '#6B7280',
     textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 16,
+    lineHeight: normalize(24),
+    paddingHorizontal: wp(4.3), // 16px on 375px screen
   },
   buttonContainer: {
-    paddingBottom: 32,
+    paddingBottom: hp(4), // 32px on 800px screen
+    paddingHorizontal: wp(2.7), // 10px on 375px screen for better button spacing
   },
   loginButtonContainer: {
-    marginTop: 16,
+    marginTop: hp(2), // 16px on 800px screen
     alignItems: 'center',
   },
   loginPrompt: {
-    fontSize: 14,
+    fontSize: normalize(14),
     color: '#6B7280',
-    marginBottom: 12,
+    marginBottom: hp(1.5), // 12px on 800px screen
     textAlign: 'center',
   },
 });

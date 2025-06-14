@@ -63,7 +63,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.appName}>Project Moon</Text>
+          <Text style={styles.appName}>OpenDreams</Text>
         </View>
         <TouchableOpacity style={styles.notificationButton}>
           <Bell size={24} color="#111827" />

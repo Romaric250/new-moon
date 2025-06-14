@@ -1,7 +1,7 @@
 {
-  "name": "project-moon",
+  "name": "opendreams",
   "version": "1.0.0",
-  "description": "Project Moon - An exclusive e-learning platform for high-achieving Cameroonian students",
+  "description": "OpenDreams - An exclusive e-learning platform for high-achieving Cameroonian students",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",

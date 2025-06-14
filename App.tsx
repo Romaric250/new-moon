@@ -23,10 +23,13 @@ import { SubmittedAssignmentsScreen } from './src/screens/SubmittedAssignmentsSc
 import { EventDetailsScreen } from './src/screens/EventDetailsScreen';
 import { EventsScreen } from './src/screens/EventsScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { BatchSelectionScreen } from './src/screens/BatchSelectionScreen';
 
 type Screen =
   | 'onboarding'
   | 'enterCode'
+  | 'batchSelection'
   | 'createAccount'
   | 'login'
   | 'forgotPassword'
@@ -46,7 +49,8 @@ type Screen =
   | 'eventDetails'
   | 'notifications'
   | 'events'
-  | 'profile';
+  | 'profile'
+  | 'settings';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('onboarding');
@@ -79,8 +83,16 @@ export default function App() {
             onClose={() => navigateToScreen('onboarding')}
             onSubmit={(code) => {
               console.log('Admission code:', code);
-              navigateToScreen('createAccount');
+              navigateToScreen('batchSelection');
             }}
+          />
+        );
+
+      case 'batchSelection':
+        return (
+          <BatchSelectionScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('enterCode')}
           />
         );
 
@@ -243,6 +255,14 @@ export default function App() {
           <ProfileScreen
             onNavigate={handleNavigation}
             onBack={() => navigateToScreen('home')}
+          />
+        );
+
+      case 'settings':
+        return (
+          <SettingsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('profile')}
           />
         );
 

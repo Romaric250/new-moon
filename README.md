@@ -1,6 +1,6 @@
-# Project Moon
+# OpenDreams
 
-Project Moon is an exclusive e-learning platform designed for high-achieving Cameroonian students. We provide access to top-tier educational resources and a supportive community to help students reach their full potential.
+OpenDreams is an exclusive e-learning platform designed for high-achieving Cameroonian students. We provide access to top-tier educational resources and a supportive community to help students reach their full potential.
 
 ## 🚀 Features
 

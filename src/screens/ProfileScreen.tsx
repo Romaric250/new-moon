@@ -44,7 +44,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       id: 'settings',
       title: 'Settings',
       icon: Settings,
-      onPress: () => {},
+      onPress: () => onNavigate('settings'),
     },
     {
       id: 'logout',

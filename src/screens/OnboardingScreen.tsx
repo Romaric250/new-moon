@@ -34,10 +34,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNext, onLo
         {/* Content */}
         <View style={styles.textContainer}>
           <Text style={styles.title}>
-            Welcome to Project Moon
+            Welcome to OpenDreams
           </Text>
           <Text style={styles.description}>
-            Project Moon is an exclusive online learning platform for high-achieving Cameroonian
+            OpenDreams is an exclusive online learning platform for high-achieving Cameroonian
             students. We provide access to top-tier educational resources and a supportive
             community to help you reach your full potential.
           </Text>

@@ -45,7 +45,7 @@ export const StepDetailsScreen: React.FC<StepDetailsScreenProps> = ({
   step = {
     id: '1',
     title: 'Step 1',
-    objective: 'Understand the basics of the Project Moon platform and how to navigate its features.',
+    objective: 'Understand the basics of the OpenDreams platform and how to navigate its features.',
   },
 }) => {
   const [actionItems, setActionItems] = useState<ActionItem[]>([
@@ -64,7 +64,7 @@ export const StepDetailsScreen: React.FC<StepDetailsScreenProps> = ({
   const resources: Resource[] = [
     {
       id: '1',
-      title: 'Welcome to Project Moon',
+      title: 'Welcome to OpenDreams',
       type: 'Video',
       icon: Play,
     },

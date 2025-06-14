@@ -124,7 +124,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           >
             <ArrowLeft size={24} color="#111827" />
           </TouchableOpacity>
-          <Text style={styles.title}>Project Moon</Text>
+          <Text style={styles.title}>OpenDreams</Text>
         </View>
 
         {/* Content */}

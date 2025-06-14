@@ -182,7 +182,7 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
       ]}
       onPress={() => {
         if (item.status !== 'locked') {
-          onNavigate('courseDetails', { item });
+          onNavigate('stepDetails', { step: item });
         }
       }}
       activeOpacity={item.status === 'locked' ? 1 : 0.7}

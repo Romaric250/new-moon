@@ -54,7 +54,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
   const bottomTabs = [
     { id: 'home', title: 'Home', icon: HomeIcon, active: true },
     { id: 'learn', title: 'Learn', icon: BookOpen, active: false },
-    { id: 'community', title: 'Community', icon: Users, active: false },
+    { id: 'events', title: 'Events', icon: Users, active: false },
     { id: 'profile', title: 'Profile', icon: User, active: false },
   ];
 
@@ -78,7 +78,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
 
         {/* Navigation Cards */}
         <View style={styles.cardsContainer}>
-          {navigationCards.map((card, index) => {
+          {navigationCards.map((card) => {
             const IconComponent = card.icon;
             return (
               <TouchableOpacity

@@ -14,6 +14,13 @@ import { CourseDetailsScreen } from './src/screens/CourseDetailsScreen';
 import { CourseModulesScreen } from './src/screens/CourseModulesScreen';
 import { RoadmapScreen } from './src/screens/RoadmapScreen';
 import { LessonDetailsScreen } from './src/screens/LessonDetailsScreen';
+import { CalendarScreen } from './src/screens/CalendarScreen';
+import { AssignmentsScreen } from './src/screens/AssignmentsScreen';
+import { AssignmentDetailsScreen } from './src/screens/AssignmentDetailsScreen';
+import { SubmitAssignmentScreen } from './src/screens/SubmitAssignmentScreen';
+import { StepDetailsScreen } from './src/screens/StepDetailsScreen';
+import { SubmittedAssignmentsScreen } from './src/screens/SubmittedAssignmentsScreen';
+import { EventDetailsScreen } from './src/screens/EventDetailsScreen';
 
 type Screen =
   | 'onboarding'
@@ -30,8 +37,13 @@ type Screen =
   | 'lessonDetails'
   | 'calendar'
   | 'assignments'
+  | 'assignmentDetails'
+  | 'submitAssignment'
+  | 'submittedAssignments'
+  | 'stepDetails'
+  | 'eventDetails'
   | 'notifications'
-  | 'community'
+  | 'events'
   | 'profile';
 
 export default function App() {
@@ -157,9 +169,67 @@ export default function App() {
         );
 
       case 'calendar':
+        return (
+          <CalendarScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('home')}
+          />
+        );
+
       case 'assignments':
+        return (
+          <AssignmentsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('home')}
+          />
+        );
+
+      case 'assignmentDetails':
+        return (
+          <AssignmentDetailsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('assignments')}
+            assignment={navigationParams?.assignment}
+          />
+        );
+
+      case 'submitAssignment':
+        return (
+          <SubmitAssignmentScreen
+            onNavigate={handleNavigation}
+            onClose={() => navigateToScreen('assignmentDetails', navigationParams)}
+            assignment={navigationParams?.assignment}
+          />
+        );
+
+      case 'submittedAssignments':
+        return (
+          <SubmittedAssignmentsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('assignments')}
+          />
+        );
+
+      case 'stepDetails':
+        return (
+          <StepDetailsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('roadmap')}
+            step={navigationParams?.step}
+          />
+        );
+
+      case 'eventDetails':
+        return (
+          <EventDetailsScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('calendar')}
+            event={navigationParams?.event}
+          />
+        );
+
       case 'notifications':
-      case 'community':
+      case 'events':
       case 'profile':
         // Placeholder screens - redirect to home for now
         return <HomeScreen onNavigate={handleNavigation} />;

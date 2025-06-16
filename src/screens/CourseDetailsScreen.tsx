@@ -77,23 +77,23 @@ export const CourseDetailsScreen: React.FC<CourseDetailsScreenProps> = ({
           </View>
         </View>
 
-        {/* Course Info */}
-        <View style={styles.courseInfo}>
-          <Text style={styles.courseTitle}>{course.title}</Text>
-          <Text style={styles.courseDescription}>{course.description}</Text>
+        {/* Course Info - Using NativeWind Classes */}
+        <View className="p-6">
+          <Text className="text-2xl font-bold text-gray-900 mb-4">{course.title}</Text>
+          <Text className="text-base text-gray-600 leading-6 mb-8">{course.description}</Text>
 
-          {/* Instructor Section */}
-          <View style={styles.instructorSection}>
-            <Text style={styles.sectionTitle}>Instructor</Text>
-            <View style={styles.instructorCard}>
-              <View style={styles.instructorAvatar}>
-                <Text style={styles.instructorInitial}>
+          {/* Instructor Section - Using NativeWind Classes */}
+          <View className="mb-8">
+            <Text className="text-lg font-bold text-gray-900 mb-4">Instructor</Text>
+            <View className="flex-row items-center">
+              <View className="w-12 h-12 rounded-full bg-primary-500 justify-center items-center mr-4">
+                <Text className="text-lg font-bold text-white">
                   {course.instructor.charAt(0)}
                 </Text>
               </View>
-              <View style={styles.instructorInfo}>
-                <Text style={styles.instructorName}>{course.instructor}</Text>
-                <Text style={styles.instructorTitle}>Test Prep Expert</Text>
+              <View className="flex-1">
+                <Text className="text-base font-semibold text-gray-900 mb-1">{course.instructor}</Text>
+                <Text className="text-sm text-gray-600">Test Prep Expert</Text>
               </View>
             </View>
           </View>
@@ -106,13 +106,13 @@ export const CourseDetailsScreen: React.FC<CourseDetailsScreenProps> = ({
             </View>
           </View>
 
-          {/* Start Course Button */}
+          {/* Start Course Button - Using NativeWind Classes */}
           <TouchableOpacity
-            style={styles.startButton}
+            className="bg-primary-500 rounded-xl py-4 items-center mt-4 shadow-lg"
             onPress={() => onNavigate('courseModules', { course })}
             activeOpacity={0.8}
           >
-            <Text style={styles.startButtonText}>Start Course</Text>
+            <Text className="text-base font-semibold text-white">Start Course</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

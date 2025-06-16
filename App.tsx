@@ -1,3 +1,4 @@
+import './global.css';
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -26,6 +27,7 @@ import { ProfileScreen } from './src/screens/ProfileScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { BatchSelectionScreen } from './src/screens/BatchSelectionScreen';
 import { NotificationsScreen } from './src/screens/NotificationsScreen';
+import { NativeWindTest } from './src/components/NativeWindTest';
 
 type Screen =
   | 'onboarding'
@@ -51,7 +53,8 @@ type Screen =
   | 'notifications'
   | 'events'
   | 'profile'
-  | 'settings';
+  | 'settings'
+  | 'nativewindTest';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('onboarding');
@@ -274,6 +277,9 @@ export default function App() {
             onBack={() => navigateToScreen('home')}
           />
         );
+
+      case 'nativewindTest':
+        return <NativeWindTest />;
 
       default:
         return <OnboardingScreen onNext={() => navigateToScreen('enterCode')} onLogin={() => navigateToScreen('login')} />;

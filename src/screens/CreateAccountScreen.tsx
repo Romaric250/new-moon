@@ -3,24 +3,14 @@ import {
   View,
   Text,
   SafeAreaView,
-  StyleSheet,
   TouchableOpacity,
   Animated,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform
+  Easing
 } from 'react-native';
 import { HelpCircle } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { Colors } from '../constants/colors';
-import {
-  getResponsiveStyles,
-  createEntranceAnimation,
-  createButtonPressAnimation,
-  getResponsiveAnimationConfig,
-  screenDimensions
-} from '../utils';
 
 interface CreateAccountScreenProps {
   onCreateAccount: (data: {
@@ -42,16 +32,27 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Enhanced animation values
+  // Simplified animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(getResponsiveAnimationConfig().slideDistance)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
   const buttonScaleAnim = useRef(new Animated.Value(1)).current;
 
-  const responsiveStyles = getResponsiveStyles();
-
   useEffect(() => {
-    // Enhanced entrance animation
-    createEntranceAnimation(fadeAnim, slideAnim).start();
+    // Entrance animation
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, []);
 
   const validateForm = () => {
@@ -85,7 +86,18 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
     if (!validateForm()) return;
 
     // Button press animation
-    createButtonPressAnimation(buttonScaleAnim).start();
+    Animated.sequence([
+      Animated.timing(buttonScaleAnim, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonScaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
     setIsLoading(true);
 
@@ -109,27 +121,28 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View 
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
+    <SafeAreaView className="flex-1 bg-neutral-100">
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+        className="flex-1 px-6 py-4"
       >
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Create your account</Text>
-          <TouchableOpacity style={styles.helpButton} activeOpacity={0.7}>
-            <HelpCircle size={24} color={Colors.darkBeige} />
+        <View className="flex-row items-center justify-between mb-8">
+          <Text className="text-2xl font-bold text-gray-900 flex-1">Create your account</Text>
+          <TouchableOpacity
+            className="w-10 h-10 rounded-full bg-white items-center justify-center shadow-md"
+            activeOpacity={0.7}
+          >
+            <HelpCircle size={24} color="#9C874A" />
           </TouchableOpacity>
         </View>
 
         {/* Form */}
-        <ScrollView 
-          style={styles.formContainer}
+        <ScrollView
+          className="flex-1"
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
@@ -177,7 +190,10 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
         </ScrollView>
 
         {/* Submit Button */}
-        <View style={styles.buttonContainer}>
+        <Animated.View
+          style={{ transform: [{ scale: buttonScaleAnim }] }}
+          className="pb-8 pt-4"
+        >
           <Button
             title="Create Account"
             onPress={handleSubmit}
@@ -186,52 +202,10 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
             fullWidth
             loading={isLoading}
           />
-        </View>
+        </Animated.View>
       </Animated.View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.cream,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    flex: 1,
-  },
-  helpButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  formContainer: {
-    flex: 1,
-  },
-  buttonContainer: {
-    paddingBottom: 32,
-    paddingTop: 16,
-  },
-});
+

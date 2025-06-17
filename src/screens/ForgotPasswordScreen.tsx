@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  SafeAreaView, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  SafeAreaView,
   TouchableOpacity,
   Animated,
   Easing
@@ -11,7 +10,6 @@ import {
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { Colors } from '../constants/colors';
 
 interface ForgotPasswordScreenProps {
   onBack: () => void;
@@ -95,20 +93,18 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View 
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
+    <SafeAreaView className="flex-1 bg-neutral-100">
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+        className="flex-1 px-6 py-4"
       >
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
+        <View className="mb-8">
+          <TouchableOpacity
+            className="w-10 h-10 rounded-full bg-white items-center justify-center shadow-md"
             onPress={onBack}
             activeOpacity={0.7}
           >
@@ -117,15 +113,15 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
         </View>
 
         {/* Content */}
-        <View style={styles.formContainer}>
-          <Text style={styles.title}>Forgot password?</Text>
-          
-          <Text style={styles.description}>
-            Enter the email associated with your account and we'll send an email 
+        <View className="flex-1 pt-6">
+          <Text className="text-2xl font-bold text-gray-900 mb-4">Forgot password?</Text>
+
+          <Text className="text-base text-gray-600 leading-6 mb-8">
+            Enter the email associated with your account and we'll send an email
             with instructions to reset your password.
           </Text>
-          
-          <View style={styles.inputContainer}>
+
+          <View className="mb-6">
             <Input
               label="Email"
               value={email}
@@ -141,23 +137,21 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
 
           {/* Success Message */}
           {isSuccess && (
-            <Animated.View 
-              style={[
-                styles.successContainer,
-                {
-                  opacity: successAnim,
-                  transform: [
-                    {
-                      scale: successAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.8, 1],
-                      }),
-                    },
-                  ],
-                },
-              ]}
+            <Animated.View
+              style={{
+                opacity: successAnim,
+                transform: [
+                  {
+                    scale: successAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.8, 1],
+                    }),
+                  },
+                ],
+              }}
+              className="bg-green-100 rounded-xl p-4 mb-4"
             >
-              <Text style={styles.successText}>
+              <Text className="text-sm text-green-800 font-medium text-center">
                 ✓ Reset instructions sent to your email!
               </Text>
             </Animated.View>
@@ -165,7 +159,7 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
         </View>
 
         {/* Submit Button */}
-        <View style={styles.buttonContainer}>
+        <View className="pb-8">
           <Button
             title={isSuccess ? "Instructions Sent" : "Send reset instructions"}
             onPress={handleSubmit}
@@ -181,64 +175,4 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.cream,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  header: {
-    marginBottom: 32,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  formContainer: {
-    flex: 1,
-    paddingTop: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  description: {
-    fontSize: 16,
-    color: '#6B7280',
-    lineHeight: 24,
-    marginBottom: 32,
-  },
-  inputContainer: {
-    marginBottom: 24,
-  },
-  successContainer: {
-    backgroundColor: '#D1FAE5',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  successText: {
-    fontSize: 14,
-    color: '#065F46',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    paddingBottom: 32,
-  },
-});
+

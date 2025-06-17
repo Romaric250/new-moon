@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  SafeAreaView, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  SafeAreaView,
   TouchableOpacity,
   Animated,
   Easing
@@ -11,7 +10,6 @@ import {
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { Colors } from '../constants/colors';
 
 interface LoginScreenProps {
   onBack: () => void;
@@ -105,33 +103,31 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View 
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
+    <SafeAreaView className="flex-1 bg-neutral-100">
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+        className="flex-1 px-6 py-4"
       >
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
+        <View className="flex-row items-center mb-8">
+          <TouchableOpacity
+            className="w-10 h-10 rounded-full bg-white items-center justify-center mr-4 shadow-md"
             onPress={onBack}
             activeOpacity={0.7}
           >
             <ArrowLeft size={24} color="#111827" />
           </TouchableOpacity>
-          <Text style={styles.title}>OpenDreams</Text>
+          <Text className="text-lg font-semibold text-gray-900">OpenDreams</Text>
         </View>
 
         {/* Content */}
-        <View style={styles.formContainer}>
-          <Text style={styles.subtitle}>Welcome back</Text>
-          
-          <View style={styles.inputsContainer}>
+        <View className="flex-1 pt-6">
+          <Text className="text-2xl font-bold text-gray-900 mb-8">Welcome back</Text>
+
+          <View className="mb-4">
             <Input
               label="Email"
               value={formData.email}
@@ -155,21 +151,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             />
           </View>
 
-          <TouchableOpacity 
-            style={styles.forgotPasswordButton}
+          <TouchableOpacity
+            className="self-start py-2"
             onPress={onForgotPassword}
             activeOpacity={0.7}
           >
-            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+            <Text className="text-sm text-neutral-400 font-medium">Forgot password?</Text>
           </TouchableOpacity>
         </View>
 
         {/* Login Button */}
-        <Animated.View 
-          style={[
-            styles.buttonContainer,
-            { transform: [{ scale: buttonScaleAnim }] }
-          ]}
+        <Animated.View
+          style={{ transform: [{ scale: buttonScaleAnim }] }}
+          className="pb-8"
         >
           <Button
             title="Log in"
@@ -185,63 +179,4 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.cream,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  formContainer: {
-    flex: 1,
-    paddingTop: 24,
-  },
-  subtitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 32,
-  },
-  inputsContainer: {
-    marginBottom: 16,
-  },
-  forgotPasswordButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: Colors.darkBeige,
-    fontWeight: '500',
-  },
-  buttonContainer: {
-    paddingBottom: 32,
-  },
-});
+

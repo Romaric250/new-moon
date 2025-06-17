@@ -3,11 +3,9 @@ import {
   View,
   Text,
   SafeAreaView,
-  StyleSheet,
   TouchableOpacity,
   Animated,
   Easing,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
   ScrollView
@@ -15,16 +13,12 @@ import {
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { Colors } from '../constants/colors';
-// Removed animation imports to avoid conflicts
 
 interface ResetPasswordScreenProps {
   onBack: () => void;
   onResetPassword: (password: string) => void;
   token: string;
 }
-
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   onBack,
@@ -129,48 +123,46 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-neutral-100">
       <KeyboardAvoidingView
-        style={styles.keyboardAvoid}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <Animated.View
-          style={[
-            styles.content,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
+          style={{
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+          }}
+          className="flex-1 px-6 py-4"
         >
           {/* Header */}
-          <View style={styles.header}>
+          <View className="flex-row items-center mb-8">
             <TouchableOpacity
-              style={styles.backButton}
+              className="w-10 h-10 rounded-full bg-white items-center justify-center mr-4 shadow-md"
               onPress={onBack}
               activeOpacity={0.6}
             >
               <ArrowLeft size={24} color="#111827" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Reset Password</Text>
+            <Text className="text-lg font-semibold text-gray-900">Reset Password</Text>
           </View>
 
           {/* Content */}
           <ScrollView
-            style={styles.formContainer}
-            contentContainerStyle={styles.formContent}
+            className="flex-1"
+            contentContainerStyle={{ paddingTop: 24, paddingBottom: 20, flexGrow: 1 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             bounces={false}
           >
-            <Text style={styles.title}>Create new password</Text>
+            <Text className="text-2xl font-bold text-gray-900 mb-3 leading-8">Create new password</Text>
 
-            <Text style={styles.description}>
+            <Text className="text-base text-gray-600 leading-6 mb-8">
               Your new password must be different from previously used passwords
             </Text>
 
-            <View style={styles.inputsContainer}>
+            <View className="gap-3">
             <View>
               <Input
                 label="New password"
@@ -182,28 +174,22 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 error={errors.password}
                 testID="new-password-input"
               />
-              
-              {/* Simplified Password Strength Indicator */}
+
+              {/* Password Strength Indicator */}
               {formData.password.length > 0 && (
-                <View style={styles.strengthContainer}>
-                  <View style={styles.strengthBar}>
+                <View className="flex-row items-center mt-3 mb-4 px-1">
+                  <View className="flex-1 h-1.5 bg-gray-200 rounded-full mr-4 overflow-hidden shadow-sm">
                     <View
-                      style={[
-                        styles.strengthProgress,
-                        {
-                          width: `${getPasswordStrength(formData.password) * 100}%`,
-                          backgroundColor: getStrengthColor(),
-                        },
-                      ]}
+                      style={{
+                        width: `${getPasswordStrength(formData.password) * 100}%`,
+                        backgroundColor: getStrengthColor(),
+                      }}
+                      className="h-full rounded-full shadow-sm"
                     />
                   </View>
                   <Text
-                    style={[
-                      styles.strengthText,
-                      {
-                        color: getStrengthColor(),
-                      }
-                    ]}
+                    style={{ color: getStrengthColor() }}
+                    className="text-sm font-semibold min-w-[50px] text-right"
                   >
                     {getStrengthText()}
                   </Text>
@@ -225,7 +211,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
           </ScrollView>
 
           {/* Submit Button */}
-          <View style={styles.buttonContainer}>
+          <View className="pb-8 pt-4 px-1">
             <Button
               title="Reset Password"
               onPress={handleSubmit}
@@ -241,105 +227,4 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.cream,
-  },
-  keyboardAvoid: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: screenWidth > 400 ? 32 : 24,
-    paddingVertical: screenHeight > 700 ? 24 : 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  formContainer: {
-    flex: 1,
-  },
-  formContent: {
-    paddingTop: screenHeight > 700 ? 32 : 24,
-    paddingBottom: 20,
-    flexGrow: 1,
-  },
-  title: {
-    fontSize: screenWidth > 400 ? 28 : 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: screenHeight > 700 ? 12 : 8,
-    lineHeight: screenWidth > 400 ? 36 : 32,
-  },
-  description: {
-    fontSize: screenWidth > 400 ? 16 : 14,
-    color: '#6B7280',
-    lineHeight: screenWidth > 400 ? 24 : 20,
-    marginBottom: screenHeight > 700 ? 40 : 32,
-  },
-  inputsContainer: {
-    gap: screenHeight > 700 ? 12 : 8,
-  },
-  strengthContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: screenHeight > 700 ? 12 : 8,
-    marginBottom: screenHeight > 700 ? 16 : 12,
-    paddingHorizontal: 4,
-  },
-  strengthBar: {
-    flex: 1,
-    height: screenWidth > 400 ? 6 : 4,
-    backgroundColor: '#E5E7EB',
-    borderRadius: screenWidth > 400 ? 3 : 2,
-    marginRight: screenWidth > 400 ? 16 : 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  strengthProgress: {
-    height: '100%',
-    borderRadius: screenWidth > 400 ? 3 : 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  strengthText: {
-    fontSize: screenWidth > 400 ? 14 : 12,
-    fontWeight: '600',
-    minWidth: screenWidth > 400 ? 60 : 50,
-    textAlign: 'right',
-  },
-  buttonContainer: {
-    paddingBottom: screenHeight > 700 ? 40 : 32,
-    paddingTop: 16,
-    paddingHorizontal: 4,
-  },
-});
+

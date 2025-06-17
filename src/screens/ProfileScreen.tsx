@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -20,7 +19,6 @@ import {
   Users,
   User,
 } from 'lucide-react-native';
-import { Colors } from '../constants/colors';
 
 interface ProfileScreenProps {
   onNavigate: (screen: string, params?: any) => void;
@@ -63,74 +61,73 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View style={styles.header}>
+      <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
         <TouchableOpacity
-          style={styles.backButton}
+          className="p-2 -ml-2"
           onPress={onBack}
           activeOpacity={0.7}
         >
           <ArrowLeft size={24} color="#111827" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <View style={styles.placeholder} />
+        <Text className="text-lg font-semibold text-gray-900">Profile</Text>
+        <View className="w-10" />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
         {/* Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>R</Text>
+        <View className="items-center py-8">
+          <View className="mb-4">
+            <View className="w-20 h-20 rounded-full bg-primary justify-center items-center">
+              <Text className="text-2xl font-bold text-white">R</Text>
             </View>
           </View>
-          
-          <Text style={styles.userName}>{userInfo.name}</Text>
-          <Text style={styles.joinDate}>Member since {userInfo.joinDate}</Text>
+
+          <Text className="text-2xl font-bold text-gray-900 mb-1">{userInfo.name}</Text>
+          <Text className="text-sm text-gray-600">Member since {userInfo.joinDate}</Text>
         </View>
 
         {/* Contact Information */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact Information</Text>
-          
-          <View style={styles.infoItem}>
+        <View className="mb-8">
+          <Text className="text-lg font-bold text-gray-900 mb-4">Contact Information</Text>
+
+          <View className="flex-row items-center py-3 border-b border-gray-100">
             <Mail size={20} color="#6B7280" />
-            <Text style={styles.infoText}>{userInfo.email}</Text>
+            <Text className="text-base text-gray-700 ml-3">{userInfo.email}</Text>
           </View>
-          
-          <View style={styles.infoItem}>
+
+          <View className="flex-row items-center py-3 border-b border-gray-100">
             <Phone size={20} color="#6B7280" />
-            <Text style={styles.infoText}>{userInfo.phone}</Text>
+            <Text className="text-base text-gray-700 ml-3">{userInfo.phone}</Text>
           </View>
-          
-          <View style={styles.infoItem}>
+
+          <View className="flex-row items-center py-3 border-b border-gray-100">
             <MapPin size={20} color="#6B7280" />
-            <Text style={styles.infoText}>{userInfo.location}</Text>
+            <Text className="text-base text-gray-700 ml-3">{userInfo.location}</Text>
           </View>
         </View>
 
         {/* Profile Options */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
-          
+        <View className="mb-8">
+          <Text className="text-lg font-bold text-gray-900 mb-4">Account</Text>
+
           {profileOptions.map((option) => {
             const IconComponent = option.icon;
             return (
               <TouchableOpacity
                 key={option.id}
-                style={styles.optionItem}
+                className="flex-row items-center py-4 border-b border-gray-100"
                 onPress={option.onPress}
                 activeOpacity={0.7}
               >
-                <IconComponent 
-                  size={20} 
-                  color={option.isDestructive ? '#EF4444' : '#6B7280'} 
+                <IconComponent
+                  size={20}
+                  color={option.isDestructive ? '#EF4444' : '#6B7280'}
                 />
-                <Text style={[
-                  styles.optionText,
-                  option.isDestructive && styles.destructiveText
-                ]}>
+                <Text className={`text-base ml-3 ${
+                  option.isDestructive ? 'text-red-500' : 'text-gray-700'
+                }`}>
                   {option.title}
                 </Text>
               </TouchableOpacity>
@@ -140,26 +137,24 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View style={styles.bottomNavContainer}>
-        <View style={styles.bottomNav}>
+      <View className="bg-white border-t border-gray-200 pb-8">
+        <View className="flex-row py-3 px-4 pt-4">
           {bottomTabs.map((tab) => {
             const IconComponent = tab.icon;
             return (
               <TouchableOpacity
                 key={tab.id}
-                style={styles.bottomNavItem}
+                className="flex-1 items-center py-3 px-2 min-h-[60px]"
                 onPress={() => onNavigate(tab.id)}
                 activeOpacity={0.7}
               >
                 <IconComponent
                   size={24}
-                  color={tab.active ? Colors.primary : '#6B7280'}
+                  color={tab.active ? '#F2BD24' : '#6B7280'}
                 />
                 <Text
-                  style={[
-                    styles.bottomNavText,
-                    { color: tab.active ? Colors.primary : '#6B7280' },
-                  ]}
+                  className="text-xs font-medium mt-1"
+                  style={{ color: tab.active ? '#F2BD24' : '#6B7280' }}
                 >
                   {tab.title}
                 </Text>
@@ -172,124 +167,4 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  profileCard: {
-    alignItems: 'center',
-    paddingVertical: 32,
-  },
-  avatarContainer: {
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: Colors.white,
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  joinDate: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  infoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  infoText: {
-    fontSize: 16,
-    color: '#374151',
-    marginLeft: 12,
-  },
-  optionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#374151',
-    marginLeft: 12,
-  },
-  destructiveText: {
-    color: '#EF4444',
-  },
-  bottomNavContainer: {
-    backgroundColor: Colors.white,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingBottom: 34, // Extra padding for safe area
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  bottomNavItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    minHeight: 60, // Ensure minimum touch target
-  },
-  bottomNavText: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 4,
-  },
-});
+

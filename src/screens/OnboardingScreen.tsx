@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { OpenDreamsLogo } from '../components/OpenDreamsLogo';
+import { OpenDreamsTextLogo } from '../components/OpenDreamsTextLogo';
 
 interface OnboardingScreenProps {
   onNext: () => void;
@@ -7,18 +9,27 @@ interface OnboardingScreenProps {
 }
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNext, onLogin }) => {
+  const [logoError, setLogoError] = React.useState(false);
+
+  const LogoComponent = () => {
+    try {
+      if (logoError) {
+        return <OpenDreamsTextLogo width={200} height={120} size="medium" />;
+      }
+      return <OpenDreamsLogo width={200} height={120} />;
+    } catch (error) {
+      return <OpenDreamsTextLogo width={200} height={120} size="medium" />;
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-neutral-100">
       <View className="flex-1 px-6 pt-4 pb-4">
-        {/* Header with illustration */}
+        {/* Header with OpenDreams Logo */}
         <View className="justify-center items-center py-6 min-h-[35%] max-h-[45%]">
-          {/* Placeholder for the illustration - you can replace this with an actual image */}
+          {/* OpenDreams Logo */}
           <View className="w-[70%] aspect-square max-w-[280px] max-h-[280px] bg-white rounded-[20px] mb-4 items-center justify-center shadow-lg">
-            <View className="w-[55%] aspect-square max-w-[220px] max-h-[220px] bg-primary rounded-[14px] items-center justify-center relative">
-              <View className="w-[27%] aspect-square max-w-[110px] max-h-[110px] bg-white rounded-[10px] opacity-90" />
-              <View className="w-5 h-5 bg-white rounded-[10px] absolute top-6 left-6" />
-              <View className="w-5 h-5 bg-white rounded-[10px] absolute bottom-6 right-6" />
-            </View>
+            <LogoComponent />
           </View>
 
           {/* Pagination dots */}

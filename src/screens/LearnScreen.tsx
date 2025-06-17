@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Image,
 } from 'react-native';
 import {
   Search,
@@ -17,7 +15,6 @@ import {
   User,
   Menu,
 } from 'lucide-react-native';
-import { Colors } from '../constants/colors';
 
 interface Course {
   id: string;
@@ -92,68 +89,69 @@ export const LearnScreen: React.FC<LearnScreenProps> = ({ onNavigate }) => {
   const renderCourseCard = (course: Course) => (
     <TouchableOpacity
       key={course.id}
-      style={[styles.courseCard, { backgroundColor: course.color }]}
+      className="w-[48%] rounded-2xl mb-4 overflow-hidden"
+      style={{ backgroundColor: course.color }}
       onPress={() => onNavigate('courseDetails', { course })}
       activeOpacity={0.7}
     >
-      <View style={styles.courseImageContainer}>
-        <View style={styles.courseImagePlaceholder}>
+      <View className="h-30 justify-center items-center">
+        <View className="w-4/5 h-4/5 justify-center items-center">
           {course.image === 'math' && (
-            <Text style={styles.mathFormula}>
+            <Text className="text-xs text-gray-700 text-left leading-3.5">
               {`sin(θ) = a/h\nsin θ = 1/2\nsin² x + cos² x = 1\ntan x = sin x/cos x\nlog₂8 = 3`}
             </Text>
           )}
           {course.image === 'reading' && (
-            <View style={styles.readingDocument}>
-              <View style={styles.documentHeader} />
-              <View style={styles.documentLine} />
-              <View style={styles.documentLine} />
-              <View style={styles.documentLine} />
-              <View style={styles.documentLine} />
+            <View className="w-15 h-20 bg-white rounded p-2 shadow-md">
+              <View className="h-2 bg-gray-200 rounded-sm mb-1.5" />
+              <View className="h-1 bg-gray-100 rounded-sm mb-1" />
+              <View className="h-1 bg-gray-100 rounded-sm mb-1" />
+              <View className="h-1 bg-gray-100 rounded-sm mb-1" />
+              <View className="h-1 bg-gray-100 rounded-sm" />
             </View>
           )}
           {course.image === 'writing' && (
-            <View style={styles.writingContainer}>
-              <View style={styles.pencil} />
-              <View style={styles.plant} />
+            <View className="flex-row items-center justify-around w-full">
+              <View className="w-1 h-10 bg-yellow-500 rounded-sm" />
+              <View className="w-5 h-7.5 bg-green-500 rounded-2xl" />
             </View>
           )}
           {course.image === 'test1' && (
-            <View style={styles.testContainer}>
-              <View style={styles.testPaper} />
+            <View className="items-center justify-center">
+              <View className="w-12.5 h-15 bg-white rounded shadow-md" />
             </View>
           )}
           {course.image === 'test2' && (
-            <View style={styles.testContainer}>
-              <View style={styles.testPaper} />
-              <View style={styles.pencilIcon} />
+            <View className="items-center justify-center">
+              <View className="w-12.5 h-15 bg-white rounded shadow-md" />
+              <View className="w-5 h-1 bg-yellow-500 rounded-sm absolute bottom-2.5" />
             </View>
           )}
         </View>
       </View>
-      <View style={styles.courseInfo}>
-        <Text style={styles.courseTitle}>{course.title}</Text>
-        <Text style={styles.courseInstructor}>{course.instructor}</Text>
+      <View className="p-4">
+        <Text className="text-sm font-semibold text-gray-900 mb-1">{course.title}</Text>
+        <Text className="text-xs text-gray-600">{course.instructor}</Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>My Courses</Text>
-        <TouchableOpacity style={styles.menuButton}>
+      <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
+        <Text className="text-xl font-bold text-gray-900">My Courses</Text>
+        <TouchableOpacity className="p-2">
           <Menu size={24} color="#111827" />
         </TouchableOpacity>
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
+      <View className="px-6 py-4">
+        <View className="flex-row items-center bg-gray-50 rounded-xl px-4 py-3">
           <Search size={20} color="#9CA3AF" />
           <TextInput
-            style={styles.searchInput}
+            className="flex-1 ml-3 text-base text-gray-900"
             placeholder="Search courses"
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
@@ -162,45 +160,43 @@ export const LearnScreen: React.FC<LearnScreenProps> = ({ onNavigate }) => {
         </View>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
         {/* In Progress Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>In progress</Text>
-          <View style={styles.coursesGrid}>
+        <View className="mb-8">
+          <Text className="text-lg font-bold text-gray-900 mb-4">In progress</Text>
+          <View className="flex-row flex-wrap justify-between">
             {inProgressCourses.map(renderCourseCard)}
           </View>
         </View>
 
         {/* Completed Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Completed</Text>
-          <View style={styles.coursesGrid}>
+        <View className="mb-8">
+          <Text className="text-lg font-bold text-gray-900 mb-4">Completed</Text>
+          <View className="flex-row flex-wrap justify-between">
             {completedCourses.map(renderCourseCard)}
           </View>
         </View>
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View style={styles.bottomNavContainer}>
-        <View style={styles.bottomNav}>
+      <View className="bg-white border-t border-gray-200 pb-8">
+        <View className="flex-row py-3 px-4 pt-4">
           {bottomTabs.map((tab) => {
             const IconComponent = tab.icon;
             return (
               <TouchableOpacity
                 key={tab.id}
-                style={styles.bottomNavItem}
+                className="flex-1 items-center py-3 px-2 min-h-[60px]"
                 onPress={() => onNavigate(tab.id)}
                 activeOpacity={0.7}
               >
                 <IconComponent
                   size={24}
-                  color={tab.active ? Colors.primary : '#6B7280'}
+                  color={tab.active ? '#F2BD24' : '#6B7280'}
                 />
                 <Text
-                  style={[
-                    styles.bottomNavText,
-                    { color: tab.active ? Colors.primary : '#6B7280' },
-                  ]}
+                  className="text-xs font-medium mt-1"
+                  style={{ color: tab.active ? '#F2BD24' : '#6B7280' }}
                 >
                   {tab.title}
                 </Text>
@@ -213,187 +209,4 @@ export const LearnScreen: React.FC<LearnScreenProps> = ({ onNavigate }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  menuButton: {
-    padding: 8,
-  },
-  searchContainer: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 16,
-    color: '#111827',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  coursesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  courseCard: {
-    width: '48%',
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-  courseImageContainer: {
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  courseImagePlaceholder: {
-    width: '80%',
-    height: '80%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mathFormula: {
-    fontSize: 10,
-    color: '#374151',
-    textAlign: 'left',
-    lineHeight: 14,
-  },
-  readingDocument: {
-    width: 60,
-    height: 80,
-    backgroundColor: Colors.white,
-    borderRadius: 4,
-    padding: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  documentHeader: {
-    height: 8,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 2,
-    marginBottom: 6,
-  },
-  documentLine: {
-    height: 4,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 2,
-    marginBottom: 4,
-  },
-  writingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  pencil: {
-    width: 4,
-    height: 40,
-    backgroundColor: '#F59E0B',
-    borderRadius: 2,
-  },
-  plant: {
-    width: 20,
-    height: 30,
-    backgroundColor: '#10B981',
-    borderRadius: 10,
-  },
-  testContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  testPaper: {
-    width: 50,
-    height: 60,
-    backgroundColor: Colors.white,
-    borderRadius: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  pencilIcon: {
-    width: 20,
-    height: 4,
-    backgroundColor: '#F59E0B',
-    borderRadius: 2,
-    position: 'absolute',
-    bottom: 10,
-  },
-  courseInfo: {
-    padding: 16,
-  },
-  courseTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  courseInstructor: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  bottomNavContainer: {
-    backgroundColor: Colors.white,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingBottom: 34, // Extra padding for safe area
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  bottomNavItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    minHeight: 60, // Ensure minimum touch target
-  },
-  bottomNavText: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 4,
-  },
-});
+

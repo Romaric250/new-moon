@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -18,7 +17,6 @@ import {
   BookOpen,
   User,
 } from 'lucide-react-native';
-import { Colors } from '../constants/colors';
 
 interface RoadmapItem {
   id: string;
@@ -133,7 +131,7 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
       case 'complete':
         return <CheckCircle size={20} color="#10B981" />;
       case 'in-progress':
-        return <Circle size={20} color={Colors.primary} />;
+        return <Circle size={20} color="#F2BD24" />;
       case 'next':
         return <Circle size={20} color="#6B7280" />;
       case 'locked':
@@ -163,7 +161,7 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
       case 'complete':
         return '#10B981';
       case 'in-progress':
-        return Colors.primary;
+        return '#F2BD24';
       case 'next':
         return '#6B7280';
       case 'locked':
@@ -176,10 +174,9 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
   const renderRoadmapItem = (item: RoadmapItem) => (
     <TouchableOpacity
       key={item.id}
-      style={[
-        styles.roadmapItem,
-        item.status === 'locked' && styles.lockedItem,
-      ]}
+      className={`bg-white rounded-xl border border-gray-200 mb-3 overflow-hidden ${
+        item.status === 'locked' ? 'opacity-60' : ''
+      }`}
       onPress={() => {
         if (item.status !== 'locked') {
           onNavigate('stepDetails', { step: item });
@@ -187,35 +184,30 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
       }}
       activeOpacity={item.status === 'locked' ? 1 : 0.7}
     >
-      <View style={styles.itemContent}>
-        <View style={styles.itemHeader}>
+      <View className="p-4">
+        <View className="flex-row items-center mb-2">
           {getStatusIcon(item.status)}
           <Text
-            style={[
-              styles.itemTitle,
-              item.status === 'locked' && styles.lockedText,
-            ]}
+            className={`text-base font-semibold ml-3 flex-1 ${
+              item.status === 'locked' ? 'text-gray-400' : 'text-gray-900'
+            }`}
           >
             {item.title}
           </Text>
         </View>
         <Text
-          style={[
-            styles.statusText,
-            { color: getStatusColor(item.status) },
-          ]}
+          className="text-xs font-medium mb-2"
+          style={{ color: getStatusColor(item.status) }}
         >
           {getStatusText(item.status)}
         </Text>
         {item.progress && (
-          <View style={styles.progressContainer}>
-            <Text style={styles.progressText}>{item.progress}% Complete</Text>
-            <View style={styles.progressBar}>
+          <View className="mt-2">
+            <Text className="text-xs text-gray-600 mb-2">{item.progress}% Complete</Text>
+            <View className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <View
-                style={[
-                  styles.progressFill,
-                  { width: `${item.progress}%` },
-                ]}
+                className="h-full bg-primary rounded-full"
+                style={{ width: `${item.progress}%` }}
               />
             </View>
           </View>
@@ -225,51 +217,49 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
   );
 
   const renderPhase = (phase: RoadmapPhase) => (
-    <View key={phase.id} style={styles.phaseContainer}>
-      <Text style={styles.phaseTitle}>{phase.title}</Text>
+    <View key={phase.id} className="my-6">
+      <Text className="text-lg font-bold text-gray-900 mb-4">{phase.title}</Text>
       {phase.items.map(renderRoadmapItem)}
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View style={styles.header}>
+      <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
         <TouchableOpacity
-          style={styles.backButton}
+          className="p-2 -ml-2"
           onPress={onBack}
           activeOpacity={0.7}
         >
           <ArrowLeft size={24} color="#111827" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Roadmap</Text>
-        <View style={styles.placeholder} />
+        <Text className="text-lg font-semibold text-gray-900">Roadmap</Text>
+        <View className="w-10" />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
         {phases.map(renderPhase)}
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
+      <View className="flex-row bg-white border-t border-gray-200 py-3 px-4">
         {bottomTabs.map((tab) => {
           const IconComponent = tab.icon;
           return (
             <TouchableOpacity
               key={tab.id}
-              style={styles.bottomNavItem}
+              className="flex-1 items-center py-2"
               onPress={() => onNavigate(tab.id)}
               activeOpacity={0.7}
             >
               <IconComponent
                 size={24}
-                color={tab.active ? Colors.primary : '#6B7280'}
+                color={tab.active ? '#F2BD24' : '#6B7280'}
               />
               <Text
-                style={[
-                  styles.bottomNavText,
-                  { color: tab.active ? Colors.primary : '#6B7280' },
-                ]}
+                className="text-xs font-medium mt-1"
+                style={{ color: tab.active ? '#F2BD24' : '#6B7280' }}
               >
                 {tab.title}
               </Text>
@@ -281,114 +271,4 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  phaseContainer: {
-    marginVertical: 24,
-  },
-  phaseTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  roadmapItem: {
-    backgroundColor: Colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: 12,
-    overflow: 'hidden',
-  },
-  lockedItem: {
-    opacity: 0.6,
-  },
-  itemContent: {
-    padding: 16,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-    marginLeft: 12,
-    flex: 1,
-  },
-  lockedText: {
-    color: '#9CA3AF',
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  progressContainer: {
-    marginTop: 8,
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginBottom: 8,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: Colors.primary,
-    borderRadius: 3,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: Colors.white,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  bottomNavItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  bottomNavText: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 4,
-  },
-});
+

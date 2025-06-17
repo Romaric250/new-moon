@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -22,7 +21,6 @@ import {
   Trash2,
   ChevronRight,
 } from 'lucide-react-native';
-import { Colors } from '../constants/colors';
 
 interface SettingsScreenProps {
   onNavigate: (screen: string, params?: any) => void;
@@ -150,29 +148,29 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     return (
       <TouchableOpacity
         key={item.id}
-        style={styles.settingItem}
+        className="flex-row items-center px-4 py-4 border-b border-gray-100"
         onPress={item.onPress}
         activeOpacity={0.7}
         disabled={item.type === 'toggle'}
       >
-        <View style={styles.settingIcon}>
+        <View className="w-10 h-10 rounded-lg bg-gray-50 justify-center items-center mr-3">
           <IconComponent size={20} color="#6B7280" />
         </View>
-        
-        <View style={styles.settingContent}>
-          <Text style={styles.settingTitle}>{item.title}</Text>
+
+        <View className="flex-1">
+          <Text className="text-base font-medium text-gray-900 mb-0.5">{item.title}</Text>
           {item.subtitle && (
-            <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+            <Text className="text-sm text-gray-600">{item.subtitle}</Text>
           )}
         </View>
 
-        <View style={styles.settingAction}>
+        <View className="ml-3">
           {item.type === 'toggle' ? (
             <Switch
               value={item.value}
               onValueChange={item.onToggle}
-              trackColor={{ false: '#E5E7EB', true: Colors.primary }}
-              thumbColor={item.value ? Colors.white : '#F3F4F6'}
+              trackColor={{ false: '#E5E7EB', true: '#F2BD24' }}
+              thumbColor={item.value ? '#FFFFFF' : '#F3F4F6'}
             />
           ) : (
             <ChevronRight size={20} color="#6B7280" />
@@ -183,131 +181,38 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View style={styles.header}>
+      <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
         <TouchableOpacity
-          style={styles.backButton}
+          className="p-2 -ml-2"
           onPress={onBack}
           activeOpacity={0.7}
         >
           <ArrowLeft size={24} color="#111827" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Settings</Text>
-        <View style={styles.placeholder} />
+        <Text className="text-lg font-semibold text-gray-900">Settings</Text>
+        <View className="w-10" />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
         {settingsSections.map((section) => (
-          <View key={section.title} style={styles.section}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-            <View style={styles.sectionContent}>
+          <View key={section.title} className="mt-8">
+            <Text className="text-base font-semibold text-gray-900 mb-3">{section.title}</Text>
+            <View className="bg-white rounded-xl border border-gray-200">
               {section.items.map(renderSettingItem)}
             </View>
           </View>
         ))}
 
         {/* App Version */}
-        <View style={styles.versionSection}>
-          <Text style={styles.versionText}>OpenDreams v1.0.0</Text>
-          <Text style={styles.versionSubtext}>Made with ❤️ for Cameroonian students</Text>
+        <View className="items-center py-8 mt-6">
+          <Text className="text-sm font-medium text-gray-600 mb-1">OpenDreams v1.0.0</Text>
+          <Text className="text-xs text-gray-400">Made with ❤️ for Cameroonian students</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  section: {
-    marginTop: 32,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 12,
-  },
-  sectionContent: {
-    backgroundColor: Colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#F9FAFB',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  settingContent: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#111827',
-    marginBottom: 2,
-  },
-  settingSubtitle: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  settingAction: {
-    marginLeft: 12,
-  },
-  versionSection: {
-    alignItems: 'center',
-    paddingVertical: 32,
-    marginTop: 24,
-  },
-  versionText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-    marginBottom: 4,
-  },
-  versionSubtext: {
-    fontSize: 12,
-    color: '#9CA3AF',
-  },
-});
+

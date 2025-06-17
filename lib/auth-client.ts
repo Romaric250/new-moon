@@ -1,16 +1,9 @@
 import { createAuthClient } from "better-auth/react";
-import { expoClient } from "@better-auth/expo/client";
-import * as SecureStore from "expo-secure-store";
 
+// For now, let's create a simpler auth client without the Expo plugin
+// We'll add the Expo-specific features later once the basic setup works
 export const authClient = createAuthClient({
   baseURL: process.env.EXPO_PUBLIC_API_URL || "http://localhost:8081",
-  plugins: [
-    expoClient({
-      scheme: "opendreams",
-      storagePrefix: "opendreams_auth",
-      storage: SecureStore,
-    }),
-  ],
 });
 
 // Export commonly used auth methods for convenience

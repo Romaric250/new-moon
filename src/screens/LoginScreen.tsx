@@ -5,7 +5,8 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Animated,
-  Easing
+  Easing,
+  Alert
 } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';

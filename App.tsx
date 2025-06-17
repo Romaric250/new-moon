@@ -29,6 +29,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { BatchSelectionScreen } from './src/screens/BatchSelectionScreen';
 import { NotificationsScreen } from './src/screens/NotificationsScreen';
 import { NativeWindTest } from './src/components/NativeWindTest';
+import { AuthTest } from './src/components/AuthTest';
 
 type Screen =
   | 'onboarding'
@@ -55,10 +56,11 @@ type Screen =
   | 'events'
   | 'profile'
   | 'settings'
-  | 'nativewindTest';
+  | 'nativewindTest'
+  | 'authTest';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('onboarding');
+  const [currentScreen, setCurrentScreen] = useState<Screen>('authTest');
   const [resetToken, setResetToken] = useState('');
   const [navigationParams, setNavigationParams] = useState<any>(null);
 
@@ -281,6 +283,9 @@ export default function App() {
 
       case 'nativewindTest':
         return <NativeWindTest />;
+
+      case 'authTest':
+        return <AuthTest />;
 
       default:
         return <OnboardingScreen onNext={() => navigateToScreen('enterCode')} onLogin={() => navigateToScreen('login')} />;

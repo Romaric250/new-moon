@@ -1,7 +1,6 @@
 import './global.css';
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { AuthProvider } from './providers/AuthProvider';
 import {
   OnboardingScreen,
   HomeScreen,
@@ -29,7 +28,6 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { BatchSelectionScreen } from './src/screens/BatchSelectionScreen';
 import { NotificationsScreen } from './src/screens/NotificationsScreen';
 import { NativeWindTest } from './src/components/NativeWindTest';
-import { AuthTest } from './src/components/AuthTest';
 
 type Screen =
   | 'onboarding'
@@ -56,11 +54,10 @@ type Screen =
   | 'events'
   | 'profile'
   | 'settings'
-  | 'nativewindTest'
-  | 'authTest';
+  | 'nativewindTest';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('authTest');
+  const [currentScreen, setCurrentScreen] = useState<Screen>('onboarding');
   const [resetToken, setResetToken] = useState('');
   const [navigationParams, setNavigationParams] = useState<any>(null);
 
@@ -284,18 +281,15 @@ export default function App() {
       case 'nativewindTest':
         return <NativeWindTest />;
 
-      case 'authTest':
-        return <AuthTest />;
-
       default:
         return <OnboardingScreen onNext={() => navigateToScreen('enterCode')} onLogin={() => navigateToScreen('login')} />;
     }
   };
 
   return (
-    <AuthProvider>
+    <>
       {renderScreen()}
       <StatusBar style="auto" />
-    </AuthProvider>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import {
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { useAuth } from '../../hooks/useAuth';
 
 interface LoginScreenProps {
   onBack: () => void;
@@ -27,8 +28,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  
+
+  const { signIn, signInWithGoogle, isLoading } = useAuth();
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const buttonScaleAnim = useRef(new Animated.Value(1)).current;
@@ -70,9 +72,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    
-    setIsLoading(true);
-    
+
     // Button press animation
     Animated.sequence([
       Animated.timing(buttonScaleAnim, {
@@ -86,12 +86,32 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      onLogin(formData.email, formData.password);
-    }, 1500);
+
+    try {
+      const result = await signIn(formData.email, formData.password);
+
+      if (result.success) {
+        onLogin(formData.email, formData.password);
+      } else {
+        Alert.alert('Login Failed', result.error || 'Please check your credentials and try again.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithGoogle();
+
+      if (result.success) {
+        onLogin('', ''); // Navigate to main app
+      } else {
+        Alert.alert('Google Sign In Failed', result.error || 'Please try again.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
   };
 
   const updateFormData = (field: string, value: string) => {
@@ -160,20 +180,36 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Login Button */}
-        <Animated.View
-          style={{ transform: [{ scale: buttonScaleAnim }] }}
-          className="pb-8"
-        >
+        {/* Login Buttons */}
+        <View className="pb-8 space-y-3">
+          <Animated.View style={{ transform: [{ scale: buttonScaleAnim }] }}>
+            <Button
+              title="Log in"
+              onPress={handleSubmit}
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={isLoading}
+            />
+          </Animated.View>
+
+          {/* Divider */}
+          <View className="flex-row items-center my-4">
+            <View className="flex-1 h-px bg-gray-300" />
+            <Text className="mx-4 text-sm text-gray-500">or</Text>
+            <View className="flex-1 h-px bg-gray-300" />
+          </View>
+
+          {/* Google Sign In Button */}
           <Button
-            title="Log in"
-            onPress={handleSubmit}
-            variant="primary"
+            title="Continue with Google"
+            onPress={handleGoogleSignIn}
+            variant="outline"
             size="lg"
             fullWidth
             loading={isLoading}
           />
-        </Animated.View>
+        </View>
       </Animated.View>
     </SafeAreaView>
   );

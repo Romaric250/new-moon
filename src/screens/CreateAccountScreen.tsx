@@ -6,11 +6,13 @@ import {
   TouchableOpacity,
   Animated,
   ScrollView,
-  Easing
+  Easing,
+  Alert
 } from 'react-native';
 import { HelpCircle } from 'lucide-react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { useAuth } from '../../hooks/useAuth';
 
 interface CreateAccountScreenProps {
   onCreateAccount: (data: {
@@ -30,7 +32,8 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
     confirmPassword: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { signUp, signInWithGoogle, isLoading } = useAuth();
 
   // Simplified animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -99,17 +102,43 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
       }),
     ]).start();
 
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      onCreateAccount({
+    try {
+      const result = await signUp({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       });
-    }, 2000);
+
+      if (result.success) {
+        onCreateAccount({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        });
+      } else {
+        Alert.alert('Sign Up Failed', result.error || 'Please check your information and try again.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const result = await signInWithGoogle();
+
+      if (result.success) {
+        onCreateAccount({
+          name: '',
+          email: '',
+          password: '',
+        });
+      } else {
+        Alert.alert('Google Sign Up Failed', result.error || 'Please try again.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
   };
 
   const updateFormData = (field: string, value: string) => {
@@ -189,20 +218,36 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({
           />
         </ScrollView>
 
-        {/* Submit Button */}
-        <Animated.View
-          style={{ transform: [{ scale: buttonScaleAnim }] }}
-          className="pb-8 pt-4"
-        >
+        {/* Submit Buttons */}
+        <View className="pb-8 pt-4 space-y-3">
+          <Animated.View style={{ transform: [{ scale: buttonScaleAnim }] }}>
+            <Button
+              title="Create Account"
+              onPress={handleSubmit}
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={isLoading}
+            />
+          </Animated.View>
+
+          {/* Divider */}
+          <View className="flex-row items-center my-4">
+            <View className="flex-1 h-px bg-gray-300" />
+            <Text className="mx-4 text-sm text-gray-500">or</Text>
+            <View className="flex-1 h-px bg-gray-300" />
+          </View>
+
+          {/* Google Sign Up Button */}
           <Button
-            title="Create Account"
-            onPress={handleSubmit}
-            variant="primary"
+            title="Sign up with Google"
+            onPress={handleGoogleSignUp}
+            variant="outline"
             size="lg"
             fullWidth
             loading={isLoading}
           />
-        </Animated.View>
+        </View>
       </Animated.View>
     </SafeAreaView>
   );

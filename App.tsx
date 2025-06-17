@@ -1,6 +1,7 @@
 import './global.css';
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { AuthProvider } from './providers/AuthProvider';
 import {
   OnboardingScreen,
   HomeScreen,
@@ -287,9 +288,9 @@ export default function App() {
   };
 
   return (
-    <>
+    <AuthProvider>
       {renderScreen()}
       <StatusBar style="auto" />
-    </>
+    </AuthProvider>
   );
 }

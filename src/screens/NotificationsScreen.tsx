@@ -40,7 +40,7 @@ interface NotificationsScreenProps {
   onBack: () => void;
 }
 
-export const NotificationsScreen: React.FC<NotificationsScreenProps> = ({
+const NotificationsScreen: React.FC<NotificationsScreenProps> = ({
   onNavigate,
   onBack,
 }) => {
@@ -494,3 +494,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+export default NotificationsScreen;

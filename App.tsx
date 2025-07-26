@@ -1,68 +1,42 @@
 import './global.css';
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import {
-  OnboardingScreen,
-  HomeScreen,
-  EnterCodeScreen,
-  CreateAccountScreen,
-  LoginScreen,
-  ForgotPasswordScreen,
-  ResetPasswordScreen
-} from './src/screens';
-import { LearnScreen } from './src/screens/LearnScreen';
-import { CourseDetailsScreen } from './src/screens/CourseDetailsScreen';
-import { CourseModulesScreen } from './src/screens/CourseModulesScreen';
-import { RoadmapScreen } from './src/screens/RoadmapScreen';
-import { LessonDetailsScreen } from './src/screens/LessonDetailsScreen';
-import { CalendarScreen } from './src/screens/CalendarScreen';
-import { AssignmentsScreen } from './src/screens/AssignmentsScreen';
-import { AssignmentDetailsScreen } from './src/screens/AssignmentDetailsScreen';
-import { SubmitAssignmentScreen } from './src/screens/SubmitAssignmentScreen';
-import { StepDetailsScreen } from './src/screens/StepDetailsScreen';
-import { SubmittedAssignmentsScreen } from './src/screens/SubmittedAssignmentsScreen';
-import { EventDetailsScreen } from './src/screens/EventDetailsScreen';
-import { EventsScreen } from './src/screens/EventsScreen';
-import { ProfileScreen } from './src/screens/ProfileScreen';
-import { SettingsScreen } from './src/screens/SettingsScreen';
-import { BatchSelectionScreen } from './src/screens/BatchSelectionScreen';
-import { NotificationsScreen } from './src/screens/NotificationsScreen';
-import { NativeWindTest } from './src/components/NativeWindTest';
+import SplashScreen from './src/screens/SplashScreen';
+import OnboardingScreen from './src/screens/OnboardingScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
+import OTPVerificationScreen from './src/screens/OTPVerificationScreen';
+import CropSelectionScreen from './src/screens/CropSelectionScreen';
+import ScanAnalyzeScreen from './src/screens/ScanAnalyzeScreen';
+import ResultRecommendationScreen from './src/screens/ResultRecommendationScreen';
+import CropGrowthMonitoringScreen from './src/screens/CropGrowthMonitoringScreen';
+import HistoryReportsScreen from './src/screens/HistoryReportsScreen';
+import LMSScreen from './src/screens/LMSScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 
 type Screen =
+  | 'splash'
   | 'onboarding'
-  | 'enterCode'
-  | 'batchSelection'
-  | 'createAccount'
   | 'login'
-  | 'forgotPassword'
-  | 'resetPassword'
+  | 'register'
+  | 'otpVerification'
   | 'home'
-  | 'learn'
-  | 'courseDetails'
-  | 'courseModules'
-  | 'roadmap'
-  | 'lessonDetails'
-  | 'calendar'
-  | 'assignments'
-  | 'assignmentDetails'
-  | 'submitAssignment'
-  | 'submittedAssignments'
-  | 'stepDetails'
-  | 'eventDetails'
+  | 'cropSelection'
+  | 'scanAnalyze'
+  | 'resultRecommendation'
+  | 'cropGrowthMonitoring'
+  | 'historyReports'
+  | 'lms'
   | 'notifications'
-  | 'events'
-  | 'profile'
-  | 'settings'
-  | 'nativewindTest';
+  | 'profile';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('onboarding');
-  const [resetToken, setResetToken] = useState('');
+  const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
   const [navigationParams, setNavigationParams] = useState<any>(null);
 
   const navigateToScreen = (screen: Screen, params?: any) => {
-    if (params?.token) setResetToken(params.token);
     setNavigationParams(params);
     setCurrentScreen(screen);
   };
@@ -73,40 +47,14 @@ export default function App() {
 
   const renderScreen = () => {
     switch (currentScreen) {
+      case 'splash':
+        return <SplashScreen onComplete={() => navigateToScreen('onboarding')} />;
+
       case 'onboarding':
         return (
           <OnboardingScreen
-            onNext={() => navigateToScreen('enterCode')}
+            onComplete={() => navigateToScreen('login')}
             onLogin={() => navigateToScreen('login')}
-          />
-        );
-
-      case 'enterCode':
-        return (
-          <EnterCodeScreen
-            onClose={() => navigateToScreen('onboarding')}
-            onSubmit={(code) => {
-              console.log('Admission code:', code);
-              navigateToScreen('batchSelection');
-            }}
-          />
-        );
-
-      case 'batchSelection':
-        return (
-          <BatchSelectionScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('enterCode')}
-          />
-        );
-
-      case 'createAccount':
-        return (
-          <CreateAccountScreen
-            onCreateAccount={(data) => {
-              console.log('Account created:', data);
-              navigateToScreen('home');
-            }}
           />
         );
 
@@ -118,137 +66,92 @@ export default function App() {
               console.log('Login:', { email, password });
               navigateToScreen('home');
             }}
-            onForgotPassword={() => navigateToScreen('forgotPassword')}
+            onRegister={() => navigateToScreen('register')}
           />
         );
 
-      case 'forgotPassword':
+      case 'register':
         return (
-          <ForgotPasswordScreen
+          <RegisterScreen
             onBack={() => navigateToScreen('login')}
-            onSendReset={(email) => {
-              console.log('Reset email sent to:', email);
-              navigateToScreen('resetPassword', 'demo-token-123');
+            onRegister={(data) => {
+              console.log('Register:', data);
+              navigateToScreen('otpVerification', { email: data.email, type: 'register' });
             }}
           />
         );
 
-      case 'resetPassword':
+      case 'otpVerification':
         return (
-          <ResetPasswordScreen
-            onBack={() => navigateToScreen('forgotPassword')}
-            onResetPassword={(password) => {
-              console.log('Password reset:', password);
-              navigateToScreen('login');
+          <OTPVerificationScreen
+            onBack={() => navigateToScreen('login')}
+            onVerify={(otp) => {
+              console.log('OTP verified:', otp);
+              navigateToScreen('home');
             }}
-            token={resetToken}
+            email={navigationParams?.email}
+            type={navigationParams?.type}
           />
         );
 
       case 'home':
         return <HomeScreen onNavigate={handleNavigation} />;
 
-      case 'learn':
-        return <LearnScreen onNavigate={handleNavigation} />;
-
-      case 'courseDetails':
+      case 'cropSelection':
         return (
-          <CourseDetailsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('learn')}
-            course={navigationParams?.course}
-          />
-        );
-
-      case 'courseModules':
-        return (
-          <CourseModulesScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('courseDetails', navigationParams)}
-            course={navigationParams?.course}
-          />
-        );
-
-      case 'roadmap':
-        return (
-          <RoadmapScreen
+          <CropSelectionScreen
             onNavigate={handleNavigation}
             onBack={() => navigateToScreen('home')}
           />
         );
 
-      case 'lessonDetails':
+      case 'scanAnalyze':
         return (
-          <LessonDetailsScreen
+          <ScanAnalyzeScreen
             onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('courseModules', navigationParams)}
-            lesson={navigationParams?.lesson}
+            onBack={() => navigateToScreen('cropSelection')}
+            cropId={navigationParams?.cropId}
           />
         );
 
-      case 'calendar':
+      case 'resultRecommendation':
         return (
-          <CalendarScreen
+          <ResultRecommendationScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('scanAnalyze', navigationParams)}
+            soilData={navigationParams?.soilData}
+            cropId={navigationParams?.cropId}
+          />
+        );
+
+      case 'cropGrowthMonitoring':
+        return (
+          <CropGrowthMonitoringScreen
+            onNavigate={handleNavigation}
+            onBack={() => navigateToScreen('home')}
+            cropId={navigationParams?.cropId}
+          />
+        );
+
+      case 'historyReports':
+        return (
+          <HistoryReportsScreen
             onNavigate={handleNavigation}
             onBack={() => navigateToScreen('home')}
           />
         );
 
-      case 'assignments':
+      case 'lms':
         return (
-          <AssignmentsScreen
+          <LMSScreen
             onNavigate={handleNavigation}
             onBack={() => navigateToScreen('home')}
           />
         );
 
-      case 'assignmentDetails':
+      case 'notifications':
         return (
-          <AssignmentDetailsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('assignments')}
-            assignment={navigationParams?.assignment}
-          />
-        );
-
-      case 'submitAssignment':
-        return (
-          <SubmitAssignmentScreen
-            onNavigate={handleNavigation}
-            onClose={() => navigateToScreen('assignmentDetails', navigationParams)}
-            assignment={navigationParams?.assignment}
-          />
-        );
-
-      case 'submittedAssignments':
-        return (
-          <SubmittedAssignmentsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('assignments')}
-          />
-        );
-
-      case 'stepDetails':
-        return (
-          <StepDetailsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('roadmap')}
-            step={navigationParams?.step}
-          />
-        );
-
-      case 'eventDetails':
-        return (
-          <EventDetailsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('calendar')}
-            event={navigationParams?.event}
-          />
-        );
-
-      case 'events':
-        return (
-          <EventsScreen
+          <NotificationsScreen
             onNavigate={handleNavigation}
             onBack={() => navigateToScreen('home')}
           />
@@ -262,27 +165,8 @@ export default function App() {
           />
         );
 
-      case 'settings':
-        return (
-          <SettingsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('profile')}
-          />
-        );
-
-      case 'notifications':
-        return (
-          <NotificationsScreen
-            onNavigate={handleNavigation}
-            onBack={() => navigateToScreen('home')}
-          />
-        );
-
-      case 'nativewindTest':
-        return <NativeWindTest />;
-
       default:
-        return <OnboardingScreen onNext={() => navigateToScreen('enterCode')} onLogin={() => navigateToScreen('login')} />;
+        return <SplashScreen onComplete={() => navigateToScreen('onboarding')} />;
     }
   };
 

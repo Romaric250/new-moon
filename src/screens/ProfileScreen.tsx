@@ -25,7 +25,7 @@ interface ProfileScreenProps {
   onBack: () => void;
 }
 
-export const ProfileScreen: React.FC<ProfileScreenProps> = ({
+const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onNavigate,
   onBack,
 }) => {
@@ -166,5 +166,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     </SafeAreaView>
   );
 };
+
+export default ProfileScreen;
 
 

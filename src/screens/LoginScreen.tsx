@@ -1,183 +1,118 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Animated,
-  Easing,
-  Alert
-} from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
-import { Button } from '../components/Button';
-import { Input } from '../components/Input';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, TextInput, Alert } from 'react-native';
+import { Colors } from '../constants/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LoginScreenProps {
   onBack: () => void;
   onLogin: (email: string, password: string) => void;
-  onForgotPassword: () => void;
+  onRegister: () => void;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ 
-  onBack, 
-  onLogin, 
-  onForgotPassword 
-}) => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
+const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onLogin, onRegister }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    // Entrance animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+  const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
     }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-
-    // Button press animation
-    Animated.sequence([
-      Animated.timing(buttonScaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(buttonScaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      onLogin(formData.email, formData.password);
-    }, 1500);
-  };
-
-  const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
+    onLogin(email, password);
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-100">
-      <Animated.View
-        style={{
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        }}
-        className="flex-1 px-6 py-4"
-      >
-        {/* Header */}
-        <View className="flex-row items-center mb-8">
-          <TouchableOpacity
-            className="w-10 h-10 rounded-full bg-white items-center justify-center mr-4 shadow-md"
-            onPress={onBack}
-            activeOpacity={0.7}
-          >
-            <ArrowLeft size={24} color="#111827" />
-          </TouchableOpacity>
-          <Text className="text-lg font-semibold text-gray-900">OpenDreams</Text>
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Header */}
+      <View className="px-6 py-4">
+        <TouchableOpacity onPress={onBack} className="mb-6">
+          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+        </TouchableOpacity>
+        
+        <View className="items-center mb-8">
+          <View className="w-20 h-20 bg-green-500 rounded-full items-center justify-center mb-4">
+            <Text className="text-white text-3xl">🌱</Text>
+          </View>
+          <Text className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</Text>
+          <Text className="text-gray-500 text-center">Sign in to your SAMS account</Text>
         </View>
+      </View>
 
-        {/* Content */}
-        <View className="flex-1 pt-6">
-          <Text className="text-2xl font-bold text-gray-900 mb-8">Welcome back</Text>
-
-          <View className="mb-4">
-            <Input
-              label="Email"
-              value={formData.email}
-              onChangeText={(value) => updateFormData('email', value)}
-              placeholder="Enter your email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              error={errors.email}
-              testID="email-input"
-            />
-
-            <Input
-              label="Password"
-              value={formData.password}
-              onChangeText={(value) => updateFormData('password', value)}
-              placeholder="Enter your password"
-              secureTextEntry
-              autoCapitalize="none"
-              error={errors.password}
-              testID="password-input"
-            />
+      {/* Login Form */}
+      <View className="flex-1 px-6">
+        <View className="space-y-4">
+          {/* Email Input */}
+          <View>
+            <Text className="text-sm font-medium text-gray-700 mb-2">Email</Text>
+            <View className="flex-row items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+              <Ionicons name="mail-outline" size={20} color={Colors.text.secondary} />
+              <TextInput
+                className="flex-1 ml-3 text-gray-800"
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
           </View>
 
-          <TouchableOpacity
-            className="self-start py-2"
-            onPress={onForgotPassword}
-            activeOpacity={0.7}
-          >
-            <Text className="text-sm text-neutral-400 font-medium">Forgot password?</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Password Input */}
+          <View>
+            <Text className="text-sm font-medium text-gray-700 mb-2">Password</Text>
+            <View className="flex-row items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+              <Ionicons name="lock-closed-outline" size={20} color={Colors.text.secondary} />
+              <TextInput
+                className="flex-1 ml-3 text-gray-800"
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Ionicons 
+                  name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                  size={20} 
+                  color={Colors.text.secondary} 
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-        {/* Login Button */}
-        <Animated.View
-          style={{ transform: [{ scale: buttonScaleAnim }] }}
-          className="pb-8"
-        >
-          <Button
-            title="Log in"
-            onPress={handleSubmit}
-            variant="primary"
-            size="lg"
-            fullWidth
-            loading={isLoading}
-          />
-        </Animated.View>
-      </Animated.View>
+          {/* Forgot Password */}
+          <TouchableOpacity className="self-end">
+            <Text className="text-green-500 font-medium">Forgot Password?</Text>
+          </TouchableOpacity>
+
+          {/* Login Button */}
+          <TouchableOpacity
+            className="bg-green-500 py-4 rounded-lg items-center mt-6"
+            onPress={handleLogin}
+          >
+            <Text className="text-white font-semibold text-lg">Sign In</Text>
+          </TouchableOpacity>
+
+          {/* Divider */}
+          <View className="flex-row items-center my-6">
+            <View className="flex-1 h-px bg-gray-300" />
+            <Text className="mx-4 text-gray-500">or</Text>
+            <View className="flex-1 h-px bg-gray-300" />
+          </View>
+
+          {/* Register Link */}
+          <View className="items-center">
+            <Text className="text-gray-500">Don't have an account? </Text>
+            <TouchableOpacity onPress={onRegister}>
+              <Text className="text-green-500 font-semibold">Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
+
+export default LoginScreen;
 
 

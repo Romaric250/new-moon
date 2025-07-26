@@ -1,32 +1,43 @@
 export const Colors = {
-  // Primary colors
-  primary: '#F2BD24',
+  // Primary colors - SAMS Theme
+  primary: '#4CAF50', // Verdant Green
+  white: '#FFFFFF',
   
   // Neutral colors
-  white: '#FFFFFF',
-  cream: '#FCFAF7',
-  lightBeige: '#F5F0E8',
-  beige: '#E8E0CF',
-  darkBeige: '#9C874A',
-  brown: '#8C8059',
-  lightCream: '#F2F0E8',
-  offWhite: '#FAFAFA',
-  warmCream: '#F0EDD6',
-  
-  // Semantic colors
   background: '#FFFFFF',
-  surface: '#FCFAF7',
+  surface: '#F8F9FA',
+  card: '#FFFFFF',
+  
+  // Text colors
   text: {
     primary: '#1F2937',
     secondary: '#6B7280',
     tertiary: '#9CA3AF',
+    inverse: '#FFFFFF',
   },
   
-  // Status colors (for future use)
+  // Status colors
   success: '#10B981',
   warning: '#F59E0B',
   error: '#EF4444',
   info: '#3B82F6',
+  
+  // Soil monitoring colors
+  soil: {
+    optimal: '#4CAF50',
+    good: '#8BC34A',
+    moderate: '#FFC107',
+    poor: '#FF5722',
+    critical: '#F44336',
+  },
+  
+  // Weather colors
+  weather: {
+    sunny: '#FFB300',
+    cloudy: '#90A4AE',
+    rainy: '#42A5F5',
+    stormy: '#5C6BC0',
+  },
 } as const;
 
 export type ColorKey = keyof typeof Colors;

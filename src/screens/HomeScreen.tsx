@@ -1,127 +1,144 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity
-} from 'react-native';
-import {
-  Bell,
-  Map,
-  Calendar,
-  FileText,
-  Home as HomeIcon,
-  BookOpen,
-  Users,
-  User
-} from 'lucide-react-native';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { Colors } from '../constants/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface HomeScreenProps {
-  onNavigate: (screen: string) => void;
+  onNavigate: (screen: string, params?: any) => void;
 }
 
-export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
-  const navigationCards = [
-    {
-      id: 'roadmap',
-      title: 'Roadmap',
-      icon: Map,
-      onPress: () => onNavigate('roadmap'),
-    },
-    {
-      id: 'calendar',
-      title: 'Calendar',
-      icon: Calendar,
-      onPress: () => onNavigate('calendar'),
-    },
-    {
-      id: 'assignments',
-      title: 'Assignments',
-      icon: FileText,
-      onPress: () => onNavigate('assignments'),
-    },
-    {
-      id: 'notifications',
-      title: 'Notifications',
-      icon: Bell,
-      onPress: () => onNavigate('notifications'),
-    },
-  ];
+const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
+  // Mock data - in real app, this would come from API/state
+  const soilData = {
+    temperature: 24,
+    humidity: 65,
+    pH: 6.8,
+    moisture: 72,
+    status: 'optimal' as const,
+  };
 
-  const bottomTabs = [
-    { id: 'home', title: 'Home', icon: HomeIcon, active: true },
-    { id: 'learn', title: 'Learn', icon: BookOpen, active: false },
-    { id: 'events', title: 'Events', icon: Users, active: false },
-    { id: 'profile', title: 'Profile', icon: User, active: false },
-  ];
+  const weatherData = {
+    temperature: 26,
+    condition: 'sunny' as const,
+    humidity: 60,
+  };
+
+  const getSoilStatusColor = (status: string) => {
+    switch (status) {
+      case 'optimal': return Colors.soil.optimal;
+      case 'good': return Colors.soil.good;
+      case 'moderate': return Colors.soil.moderate;
+      case 'poor': return Colors.soil.poor;
+      default: return Colors.soil.critical;
+    }
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
-        <View>
-          <Text className="text-xl font-bold text-gray-900">OpenDreams</Text>
-        </View>
-        <TouchableOpacity className="p-2">
-          <Bell size={24} color="#111827" />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
-        {/* Welcome Section */}
-        <View className="py-8">
-          <Text className="text-3xl font-bold text-gray-900">Welcome back, Romaric</Text>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1">
+        {/* Header */}
+        <View className="bg-white px-6 py-4 border-b border-gray-200">
+          <View className="flex-row justify-between items-center">
+            <View>
+              <Text className="text-2xl font-bold text-gray-800">SAMS</Text>
+              <Text className="text-gray-500">Smart Agricultural Monitoring</Text>
+            </View>
+            <TouchableOpacity onPress={() => onNavigate('notifications')}>
+              <Ionicons name="notifications-outline" size={24} color={Colors.text.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Navigation Cards */}
-        <View className="flex-row flex-wrap justify-between mb-8">
-          {navigationCards.map((card) => {
-            const IconComponent = card.icon;
-            return (
-              <TouchableOpacity
-                key={card.id}
-                className="w-[48%] bg-white rounded-2xl p-6 mb-4 border border-gray-200 items-center shadow-sm"
-                onPress={card.onPress}
-                activeOpacity={0.7}
+        {/* Current Soil Condition */}
+        <View className="bg-white mx-6 mt-6 rounded-lg p-6 shadow-sm">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-lg font-semibold text-gray-800">Current Soil Condition</Text>
+            <View 
+              className="px-3 py-1 rounded-full"
+              style={{ backgroundColor: getSoilStatusColor(soilData.status) + '20' }}
+            >
+              <Text 
+                className="text-sm font-medium"
+                style={{ color: getSoilStatusColor(soilData.status) }}
               >
-                <IconComponent size={24} color="#111827" />
-                <Text className="text-base font-semibold text-gray-900 mt-3 text-center">{card.title}</Text>
-              </TouchableOpacity>
-            );
-          })}
+                {soilData.status.toUpperCase()}
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex-row justify-between">
+            <View className="items-center">
+              <Text className="text-2xl font-bold text-gray-800">{soilData.temperature}°C</Text>
+              <Text className="text-sm text-gray-500">Temperature</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-bold text-gray-800">{soilData.humidity}%</Text>
+              <Text className="text-sm text-gray-500">Humidity</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-bold text-gray-800">{soilData.pH}</Text>
+              <Text className="text-sm text-gray-500">pH Level</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-bold text-gray-800">{soilData.moisture}%</Text>
+              <Text className="text-sm text-gray-500">Moisture</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View className="mx-6 mt-4">
+          <Text className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</Text>
+          
+          <View className="flex-row justify-between mb-4">
+            <TouchableOpacity 
+              className="flex-1 bg-green-500 rounded-lg p-4 mr-2 items-center"
+              onPress={() => onNavigate('cropSelection')}
+            >
+              <Ionicons name="leaf-outline" size={24} color="white" />
+              <Text className="text-white font-semibold mt-2">Select Crop</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              className="flex-1 bg-blue-500 rounded-lg p-4 ml-2 items-center"
+              onPress={() => onNavigate('scanAnalyze', { cropId: 'demo' })}
+            >
+              <Ionicons name="bluetooth-outline" size={24} color="white" />
+              <Text className="text-white font-semibold mt-2">Insert Device & Scan</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Bottom Navigation */}
+        <View className="bg-white mx-6 mt-4 mb-6 rounded-lg p-4 shadow-sm">
+          <View className="flex-row justify-around">
+            <TouchableOpacity className="items-center">
+              <Ionicons name="home" size={24} color={Colors.primary} />
+              <Text className="text-xs text-gray-500 mt-1">Home</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              className="items-center"
+              onPress={() => onNavigate('lms')}
+            >
+              <Ionicons name="library-outline" size={24} color={Colors.text.secondary} />
+              <Text className="text-xs text-gray-500 mt-1">Learn</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              className="items-center"
+              onPress={() => onNavigate('profile')}
+            >
+              <Ionicons name="person-outline" size={24} color={Colors.text.secondary} />
+              <Text className="text-xs text-gray-500 mt-1">Profile</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation */}
-      <View className="bg-white border-t border-gray-200 pb-8">
-        <View className="flex-row py-3 px-4 pt-4">
-          {bottomTabs.map((tab) => {
-            const IconComponent = tab.icon;
-            return (
-              <TouchableOpacity
-                key={tab.id}
-                className="flex-1 items-center py-3 px-2 min-h-[60px]"
-                onPress={() => onNavigate(tab.id)}
-                activeOpacity={0.7}
-              >
-                <IconComponent
-                  size={24}
-                  color={tab.active ? '#F2BD24' : '#6B7280'}
-                />
-                <Text
-                  className="text-xs font-medium mt-1"
-                  style={{ color: tab.active ? '#F2BD24' : '#6B7280' }}
-                >
-                  {tab.title}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
     </SafeAreaView>
   );
 };
+
+export default HomeScreen;
 
 
